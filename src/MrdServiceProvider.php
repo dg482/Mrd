@@ -43,7 +43,7 @@ class MrdServiceProvider extends ServiceProvider
     private function routeConfiguration()
     {
         return [
-            'namespace'  => "Dg482\Mrd\Http\Controllers",
+            'namespace'  => "Dg482\Dg482\Mrd\Http\Controllers",
             'middleware' => 'api',
             'prefix'     => 'api'
         ];
