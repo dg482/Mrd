@@ -2,10 +2,10 @@
 
 namespace Dg482\Mrd\Builder\Form;
 
+use Dg482\Mrd\Builder\Exceptions\ModelNotInstalled;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\Structure\Fieldset;
-use Dg482\Mrd\LocalCache;
 
 /**
  * Trait FormTrait
@@ -15,10 +15,14 @@ trait FormTrait
 {
     /**
      * @return array|array[]
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function getForm(): array
     {
+        if (null === $this->model) {
+            throw new ModelNotInstalled;
+        }
+
         return [
             'title' => $this->model->getFormTitle(),
             'form' => $this->model->getFormName(),
@@ -33,7 +37,6 @@ trait FormTrait
     /**
      * @param  array  $request
      * @return bool
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function updateForm(array $request): bool
     {
@@ -45,7 +48,6 @@ trait FormTrait
      *
      * @param  string  $name
      * @return Field
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getFormField(string $name): ?Field
     {
@@ -65,35 +67,33 @@ trait FormTrait
 
     /**
      * @return mixed
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function _formFields()
     {
-        return app()->make(LocalCache::class)
-            ->withCache('schema-'.get_class($this->model), function () {
-                $formFields = [];
-                $fields = [];
-                if (method_exists($this->model, 'resourceFields')) {
-                    $fields = $this->model->resourceFields();
+        return $this->LocalCache->withCache('schema-'.get_class($this->model), function () {
+            $formFields = [];
+            $fields = [];
+            if (method_exists($this->model, 'resourceFields')) {
+                $fields = $this->model->resourceFields();
+            }
+
+            array_filter($fields, function ($field) use (&$formFields) {
+                if ($field instanceof BaseStructure) {
+                    array_map(function ($field) use (&$formFields) {
+                        if ($field instanceof BaseStructure) {
+                            $this->filter($field->getItems(), $formFields);
+                        } else {
+                            array_push($formFields, $field);
+                        }
+                    }, $field->getItems());
+                } else {
+                    array_push($formFields, $field);
                 }
+            });
 
-                array_filter($fields, function ($field) use (&$formFields) {
-                    if ($field instanceof BaseStructure) {
-                        array_map(function ($field) use (&$formFields) {
-                            if ($field instanceof BaseStructure) {
-                                $this->filter($field->getItems(), $formFields);
-                            } else {
-                                array_push($formFields, $field);
-                            }
-                        }, $field->getItems());
-                    } else {
-                        array_push($formFields, $field);
-                    }
-                });
+            return $formFields;
 
-                return $formFields;
-
-            }, 'resource');
+        }, 'resource');
     }
 
     /**

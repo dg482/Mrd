@@ -6,15 +6,14 @@ use Dg482\Mrd\Builder\Form\Buttons\Button;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\Select;
 use Dg482\Mrd\Builder\Form\Fields\Table;
+use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Resource;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * Class BaseForms
  * @package App\Models\Forms
  */
-class BaseForms extends Model
+class BaseForms implements Model
 {
     use ValidatorsTrait, CommonFields;
 
@@ -35,13 +34,13 @@ class BaseForms extends Model
     /** @var string */
     protected string $formName = 'ui';
 
-    /** @var $model BaseForms */
-    private $model;
+    /** @var $model Model */
+    private Model $model;
 
     /**
      * @var string[]
      */
-    private $actions = [];
+    private array $actions = [];
 
     /**
      * @var string
@@ -52,18 +51,6 @@ class BaseForms extends Model
      * @var mixed|Resource
      */
     protected $_resource;
-
-    /**
-     * Identity constructor.
-     * @param  array  $attributes
-     */
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        if (class_exists($this->resource)) {
-            $this->_resource = (new $this->resource);
-        }
-    }
 
     /**
      * @return mixed
@@ -87,26 +74,20 @@ class BaseForms extends Model
     }
 
     /**
-     * @param  string  $getFormClass
+     * @param  Model  $model
      * @return $this
      */
-    public function setModel(string $getFormClass): self
+    public function setModel(Model $model): self
     {
-        $getFormClass = 'App\Resources\\'.
-            implode('\\', array_map(function ($segment) {
-                return Str::studly($segment);
-            }, explode('/',str_replace('/','/forms/', $getFormClass))));
-        if (class_exists($getFormClass)) {
-            $this->model = (new  $getFormClass());
-        }
+        $this->model = $model;
 
         return $this;
     }
 
     /**
-     * @return BaseForms
+     * @return Model
      */
-    public function getForm(): BaseForms
+    public function getForm(): Model
     {
         return $this->model;
     }
@@ -167,7 +148,7 @@ class BaseForms extends Model
     /**
      * @param  string  $relation
      * @return array
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function hasOneField(string $relation): array
     {
@@ -179,7 +160,7 @@ class BaseForms extends Model
      * @param  string  $relation
      * @param  string  $fieldType
      * @return Field
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function hasManyField(string $relation, $fieldType = Table::FIELD_TYPE): Field
     {

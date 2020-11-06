@@ -12,6 +12,7 @@ use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\Structure\Fieldset;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
 use Dg482\Mrd\Commands\Crud\Read;
+use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Actions\Create as ActionCreate;
 use Dg482\Mrd\Resource\Actions\Delete as ActionDelete;
 use Dg482\Mrd\Resource\Actions\Update as ActionUpdate;
@@ -55,9 +56,9 @@ class Resource
 
     /**
      * Текущая модель ресурса
-     * @var string
+     * @var Model|null
      */
-    protected string $model;
+    protected ?Model $model = null;
 
     /**
      * Текущее отношение в контексте ресурса
@@ -131,14 +132,9 @@ class Resource
 
     /**
      * @return AdapterInterfaces
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getAdapter(): AdapterInterfaces
     {
-        if (null === $this->adapter) {
-            $this->setAdapter(app()->make(EloquentAdapter::class));
-        }
-
         return $this->adapter;
     }
 
@@ -242,7 +238,7 @@ class Resource
      */
     public function setModel(string $model): Resource
     {
-        $this->model = $model;
+        $this->model = new $model;
 
         return $this;
     }

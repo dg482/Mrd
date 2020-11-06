@@ -19,7 +19,7 @@ class FormsResource extends Resource
      */
     public function __construct(string $getFormClass)
     {
-        $this->model = (new BaseForms)->setModel($getFormClass)->getForm();
+        $this->model = (new BaseForms)->setModel(new $getFormClass)->getForm();
 
     }
 }

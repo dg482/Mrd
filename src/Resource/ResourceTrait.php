@@ -65,7 +65,7 @@ trait ResourceTrait
         return $this->setForm(array_map(function (Field $field) use ($original, $form, $validators, $error_message) {
 
 
-            $method = $this->getMethodName('field_'.$field->getField());
+            $method = $this->camel('field_'.$field->getField());
             $key = $field->getField();
 
             if (method_exists($form, $method)) {
