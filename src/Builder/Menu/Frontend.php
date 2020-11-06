@@ -2,13 +2,14 @@
 
 namespace Dg482\Mrd\Builder\Menu;
 
-use Illuminate\Database\Eloquent\Model;
+
+use Dg482\Mrd\Model;
 
 /**
  * Class Frontend
  * @package Dg482\Mrd\Builder\Menu
  */
-class Frontend extends Model
+class Frontend implements Model
 {
     /** @var array */
     protected array $menu = [];

@@ -12,10 +12,10 @@ use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\Structure\Fieldset;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
 use Dg482\Mrd\Commands\Crud\Read;
+use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Actions\Create as ActionCreate;
 use Dg482\Mrd\Resource\Actions\Delete as ActionDelete;
 use Dg482\Mrd\Resource\Actions\Update as ActionUpdate;
-use Illuminate\Support\Collection;
 
 /**
  * Ресурс модели
@@ -56,9 +56,9 @@ class Resource
 
     /**
      * Текущая модель ресурса
-     * @var string
+     * @var Model|null
      */
-    protected string $model;
+    protected ?Model $model = null;
 
     /**
      * Текущее отношение в контексте ресурса
@@ -132,14 +132,9 @@ class Resource
 
     /**
      * @return AdapterInterfaces
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getAdapter(): AdapterInterfaces
     {
-        if (null === $this->adapter) {
-            $this->setAdapter(app()->make(EloquentAdapter::class));
-        }
-
         return $this->adapter;
     }
 
@@ -156,7 +151,7 @@ class Resource
      */
     public function getPageSize(): int
     {
-        return request()->input('pageSize', self::PAGE_SIZE);
+        return self::PAGE_SIZE;
     }
 
     /**
@@ -192,7 +187,7 @@ class Resource
                 $this->values[$field->getField()] = $field->getFieldValue($original);
 
                 if ([] !== $field->getValidators()) {
-                    $this->validators[$field->getField()]=$field->getValidators();
+                    $this->validators[$field->getField()] = $field->getValidators();
                 }
             }
 
@@ -208,13 +203,12 @@ class Resource
 
     /**
      * Фильтр коллекции
-     *
-     * @param  Collection  $items
-     * @return Collection
+     * @param  array  $items
+     * @return array
      */
-    protected function filterItems(Collection $items): Collection
+    protected function filterItems(array $items): array
     {
-        return $items->filter(function ($item) {
+        return array_filter($items, function ($item) {
             return $item;
         });
     }
@@ -244,7 +238,7 @@ class Resource
      */
     public function setModel(string $model): Resource
     {
-        $this->model = $model;
+        $this->model = new $model;
 
         return $this;
     }

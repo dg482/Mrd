@@ -3,10 +3,7 @@
 namespace Dg482\Mrd\Builder\Form;
 
 use Dg482\Mrd\Builder\Form\Fields\Field;
-use Dg482\Mrd\Builder\Form\Fields\FieldEnum;
 use Dg482\Mrd\Builder\Form\Fields\Text;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 /**
  * Trait ValidatorsTrait
@@ -14,7 +11,6 @@ use Illuminate\Support\Arr;
  */
 trait ValidatorsTrait
 {
-
     /**
      * Массив валидаторов
      * @var array
@@ -22,13 +18,13 @@ trait ValidatorsTrait
     protected array $validators = [];
 
     /** @var array */
-    protected $error_messages = [];
+    protected array $error_messages = [];
 
-    /** @var string 'blur' | 'change' | ['change', 'blur'] */
-    protected $trigger = ['blur', 'change'];
+    /** @var array 'blur' | 'change' | ['change', 'blur'] */
+    protected array $trigger = ['blur', 'change'];
 
     /** @var bool */
-    protected $required = false;
+    protected bool $required = false;
 
     /**
      * @return $this|Field
@@ -43,10 +39,10 @@ trait ValidatorsTrait
     /**
      * Валидаторы
      *
-     * @param  Request|null  $request
+     * @param  null  $request
      * @return array
      */
-    public function getValidators(?Request $request = null): array
+    public function getValidators($request = null): array
     {
         return $this->validators;
     }
@@ -90,7 +86,7 @@ trait ValidatorsTrait
     public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
     {
         $_rule = explode(':', $rule);
-        $idx = ($idx) ? $idx : Arr::first($_rule);
+        $idx = ($idx) ? $idx : current($_rule);
 
         $rule = [
             'idx' => $idx,
@@ -111,7 +107,7 @@ trait ValidatorsTrait
             case 'required':
                 $rule['required'] = true;
                 if (empty($rule['message'])) {
-                    $rule['message'] = trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
+                    $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
                 }
                 break;
             case 'max':
@@ -126,7 +122,7 @@ trait ValidatorsTrait
                 switch ($rule['type']) {
                     case Text::FIELD_TYPE:
                         if (empty($rule['message'])) {
-                            $rule['message'] = trans('validation.'.$setIdx.'.'.$rule['type'],
+                            $rule['message'] = $this->trans('validation.'.$setIdx.'.'.$rule['type'],
                                 [
                                     'attribute' => '"'.$this->getName().'"',
                                     'max' => $rule[$setIdx],
@@ -142,7 +138,7 @@ trait ValidatorsTrait
                 $rule['enum'] = array_map(function ($id) {
                     return (int) $id;
                 }, explode(',', $_rule[1]));
-                $rule['message'] = trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
+                $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
                 break;
             default:
                 $rule['type'] = 'any';
@@ -158,19 +154,18 @@ trait ValidatorsTrait
      */
     public function getTrigger(): string
     {
-        return $this->trigger;
+        return implode('|', $this->trigger);
     }
 
     /**
      * @param  string|array  $trigger
      * @return ValidatorsTrait
      */
-    public function setTrigger($trigger): ValidatorsTrait
+    public function setTrigger(array $trigger): ValidatorsTrait
     {
         $this->trigger = $trigger;
 
         return $this;
     }
-
 
 }

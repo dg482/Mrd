@@ -17,9 +17,6 @@ class EnumVariant
     /** @var string */
     public string $model = 'field_enum_variant';
 
-    /** @var array */
-    protected $fillable = [self::NAME, self::USER_ID];
-
     /**
      * @param  int  $id
      * @param  string  $name
@@ -29,7 +26,6 @@ class EnumVariant
     {
         $this->id = (int) $id;
         $this->{self::NAME} = $name;
-        $this->{self::USER_ID} = auth()->check() ? auth()->user()->id : 0;
 
         return $this;
     }

@@ -3,7 +3,6 @@
 namespace Dg482\Mrd\Resource;
 
 use Dg482\Mrd\Builder\Form\Fields\Table;
-use Illuminate\Support\Collection;
 
 /**
  * Class RelationResource
@@ -19,25 +18,25 @@ class RelationResource extends Resource
     /** @var string */
     protected string $relationName = '';
 
-    /** @var null|Collection */
-    protected ?Collection $collection = null;
+    /** @var null|array */
+    protected ?array $collection = null;
 
-    /** @var string  */
+    /** @var string */
     protected string $form = '';
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function getCollection(): Collection
+    public function getCollection(): array
     {
-        return $this->collection ?? collect([]);
+        return $this->collection ?? [];
     }
 
     /**
-     * @param  Collection|null  $collection
-     * @return RelationResource
+     * @param  array|null  $collection
+     * @return $this
      */
-    public function setCollection(?Collection $collection): RelationResource
+    public function setCollection(?array $collection): RelationResource
     {
         $this->collection = $collection;
 

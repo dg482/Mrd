@@ -64,7 +64,7 @@ abstract class Adapter implements AdapterInterfaces
      */
     public function write(): bool
     {
-        return $this->write();
+        return false;
     }
 
     /**

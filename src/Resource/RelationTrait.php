@@ -2,8 +2,6 @@
 
 namespace Dg482\Mrd\Resource;
 
-use Dg482\Mrd\Builder\Form\BaseForms;
-use Illuminate\Support\Collection;
 
 /**
  * Trait RelationTrait
@@ -14,7 +12,6 @@ trait RelationTrait
     /**
      * @param  string  $relation
      * @return RelationResource
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function hasOne(string $relation): RelationResource
     {
@@ -38,22 +35,21 @@ trait RelationTrait
     /**
      * @param  string  $relation
      * @return RelationResource
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function hasMany(string $relation): RelationResource
     {
         $model = $this->getAdapter()->getModel();
 
-        /** @var Collection $collection */
+        /** @var array $collection */
         $collection = $model->{$relation};
-        $relationModel = $collection->get(0);
+        $relationModel = current($collection);
 
-        $resource = app()->make($this->relations[$relation]);
+        $resource = (new $this->relations[$relation]);
         $resource->setRelation($relation);
         $resource->setContext($this->getContext());
 
         if (null === $relationModel) {
-            $relationModel = app()->make($resource->model);
+            $relationModel = (new $resource->model);
         }
 
         $resource->setModel(get_class($relationModel));

@@ -2,7 +2,8 @@
 
 namespace Dg482\Mrd\Adapters\Interfaces;
 
-use Illuminate\Database\Eloquent\Model;
+
+use Dg482\Mrd\Model;
 use IteratorAggregate;
 
 /**
@@ -49,10 +50,10 @@ interface AdapterInterfaces
     public function readCmd(): bool;
 
     /**
-     * @param  Model|null  $model
+     * @param  Model  $model
      * @return array
      */
-    public function getTableFields($model): array;
+    public function getTableFields(Model $model): array;
 
     /**
      * @param  \Closure|null  $filter

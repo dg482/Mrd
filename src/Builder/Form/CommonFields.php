@@ -6,7 +6,6 @@ namespace Dg482\Mrd\Builder\Form;
 
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Trait CommonFields
@@ -22,8 +21,7 @@ trait CommonFields
     {
         $user_id = $field->getFieldValue(true);
         if (empty($user_id)) {
-            $user_id = Auth::id();
-            $field->setFieldValue($user_id);
+            $field->setFieldValue(0);
         }
 
         return (new Hidden())

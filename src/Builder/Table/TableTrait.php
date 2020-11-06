@@ -6,14 +6,10 @@ use Dg482\Mrd\Adapters\Adapter;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
 use Dg482\Mrd\LocalCache;
+use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Actions\ResourceAction;
 use Dg482\Mrd\Resource\RelationResource;
 use Dg482\Mrd\Resource\Resource;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Trait TableTrait
@@ -40,15 +36,19 @@ trait TableTrait
 
         if ($this instanceof RelationResource) {
             $collection = $this->getCollection();
-            $total = ($collection) ? $collection->count() : 1;
+            $total = ($collection) ? count($collection) : 1;
 
-            $paginator = new LengthAwarePaginator($collection->all(), $total, $this->getPageSize());
+            $paginator = [
+                'items' => $collection,
+                'total' => $total,
+                'perPage' => self::PAGE_SIZE,
+            ];
         } else {
             /** @var Adapter $adapter */
             $adapter = $this->getAdapter();
             $adapter->setModel(new $this->model);
 
-            /** @var LengthAwarePaginator $paginator */
+            /** @var   $paginator */
             $paginator = $adapter->read($this->getPageSize());
         }
 
@@ -112,11 +112,12 @@ trait TableTrait
             $resultItems = ['_id' => $item->id];
             array_map(function (Field $field) use ($item, &$resultItems) {
                 $id = $field->getField();
-                if(strpos($id,'|')!== false){
-                    $id = Arr::last(explode('|',$id));
+                if (strpos($id, '|') !== false) {
+                    $id = explode('|', $id);
+                    $id = end($id);
                     $field->setFieldValue($item->{$id});
                     $resultItems[$id] = $field->getFieldValue();
-                }else{
+                } else {
                     $field->setFieldValue($item->{$field->getField()});
                     $resultItems[$field->getField()] = $field->getFieldValue();
                 }
@@ -128,13 +129,13 @@ trait TableTrait
                 if ($relationModel) {
                     array_map(function (Field $field) use ($item, $relation, $relationModel, &$resultItems) {
                         $id = str_replace(['|', $relation], '', $field->getField());
-                        if ($relationModel instanceof Collection) {
+                        if ($relationModel instanceof \IteratorAggregate) {
                             $field->setFieldValue($relationModel->count());
                         } else {
-                            $relationFieldMethod = Str::camel($id);
+                            $relationFieldMethod = $this->camel($id);
 
                             if (method_exists($relationModel, $relationFieldMethod)) {
-                                 $field->setFieldRelation($relationModel, $relationModel->{$relationFieldMethod});
+                                $field->setFieldRelation($relationModel, $relationModel->{$relationFieldMethod});
                             }
                             $field->setFieldValue($relationModel->{$id});
                         }
@@ -144,7 +145,7 @@ trait TableTrait
             }, $relations, array_keys($relations));
 
             array_push($items, $resultItems);
-        }, $paginator->items());
+        }, $paginator['items']);
 
         $result = [
             'title' => $this->getTitle(),
@@ -160,7 +161,6 @@ trait TableTrait
         }
 
         $this->tables[$this->getModel()] = $result;
-
 
         return $result;
     }
@@ -201,12 +201,14 @@ trait TableTrait
      */
     protected function getPagination($paginator)
     {
+        $paginator['perPage'] = $paginator['perPage'] ?? self::PAGE_SIZE;
+
         return [
             'showSizeChanger' => true,
-            'total' => $paginator->total(),
-            'currentPage' => $paginator->currentPage(),
-            'last' => $paginator->lastPage(),
-            'perPage' => $paginator->perPage(),
+            'total' => $paginator['total'] ?? 0,
+            'currentPage' => $paginator['current'] ?? 1,
+            'last' => ($paginator['total'] > 0) ? ceil($paginator['total'] / $paginator['perPage']) : 1,
+            'perPage' => $paginator['perPage'],
         ];
     }
 
@@ -223,7 +225,7 @@ trait TableTrait
             Field::NAME => $field->{Field::NAME},
             Field::TYPE => $field->getFieldType(),
             'dataIndex' => $id,
-            'ellipsis'=> true,
+            'ellipsis' => true,
             'width' => $id === 'id' ? 80 : 200,
             'title' => (isset($this->labels[$id])) ? $this->labels[$id] : $id,
         ];
