@@ -41,9 +41,7 @@ class LocalCache
     public function setCache($key, $values, $tags = 'default'): void
     {
         if (self::ENABLE) {
-            $key .= '-'.config('app.env');
-            (config('cache.default') === 'redis') ? Cache::tags($tags)->put($key, $values, config('cache.ttl', 3600)) :
-                Cache::put($key, $values, config('cache.ttl', 3600));
+            $this->set($tags.'-'.$key, $values);
         }
     }
 
@@ -55,10 +53,7 @@ class LocalCache
      */
     public function getCache($key, $default = null, $tags = 'default')
     {
-        $key .= '-'.config('app.env');
-
-        return (config('cache.default') === 'redis') ?
-            Cache::tags($tags)->get($key, $default) : Cache::get($key, $default);
+        return $this->get($tags.'-'.$key, $default);
     }
 
     /**
@@ -72,8 +67,7 @@ class LocalCache
         $result = (self::ENABLE) ? $this->getCache($key, null, $tags) : null;
 
         if (null === $result) {
-            $result = $callback();
-            $this->setCache($key, $result, $tags);
+            $this->set($tags.'-'.$key, $callback());
         }
 
         return $result;

@@ -15,7 +15,6 @@ use Dg482\Mrd\Commands\Crud\Read;
 use Dg482\Mrd\Resource\Actions\Create as ActionCreate;
 use Dg482\Mrd\Resource\Actions\Delete as ActionDelete;
 use Dg482\Mrd\Resource\Actions\Update as ActionUpdate;
-use Illuminate\Support\Collection;
 
 /**
  * Ресурс модели
@@ -156,7 +155,7 @@ class Resource
      */
     public function getPageSize(): int
     {
-        return request()->input('pageSize', self::PAGE_SIZE);
+        return self::PAGE_SIZE;
     }
 
     /**
@@ -192,7 +191,7 @@ class Resource
                 $this->values[$field->getField()] = $field->getFieldValue($original);
 
                 if ([] !== $field->getValidators()) {
-                    $this->validators[$field->getField()]=$field->getValidators();
+                    $this->validators[$field->getField()] = $field->getValidators();
                 }
             }
 
@@ -208,13 +207,12 @@ class Resource
 
     /**
      * Фильтр коллекции
-     *
-     * @param  Collection  $items
-     * @return Collection
+     * @param  array  $items
+     * @return array
      */
-    protected function filterItems(Collection $items): Collection
+    protected function filterItems(array $items): array
     {
-        return $items->filter(function ($item) {
+        return array_filter($items, function ($item) {
             return $item;
         });
     }

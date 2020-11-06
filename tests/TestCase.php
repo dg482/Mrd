@@ -2,7 +2,6 @@
 
 namespace Dg482\Mrd\Tests;
 
-use Dg482\Mrd\MrdServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
@@ -32,6 +31,6 @@ class TestCase extends BaseTestCase
 
     protected function getPackageProviders($app)
     {
-        return [MrdServiceProvider::class];
+        return [];
     }
 }

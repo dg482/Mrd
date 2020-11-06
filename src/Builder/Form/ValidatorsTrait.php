@@ -3,10 +3,7 @@
 namespace Dg482\Mrd\Builder\Form;
 
 use Dg482\Mrd\Builder\Form\Fields\Field;
-use Dg482\Mrd\Builder\Form\Fields\FieldEnum;
 use Dg482\Mrd\Builder\Form\Fields\Text;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 /**
  * Trait ValidatorsTrait
@@ -14,7 +11,6 @@ use Illuminate\Support\Arr;
  */
 trait ValidatorsTrait
 {
-
     /**
      * Массив валидаторов
      * @var array
@@ -43,10 +39,10 @@ trait ValidatorsTrait
     /**
      * Валидаторы
      *
-     * @param  Request|null  $request
+     * @param null  $request
      * @return array
      */
-    public function getValidators(?Request $request = null): array
+    public function getValidators($request = null): array
     {
         return $this->validators;
     }
@@ -90,7 +86,7 @@ trait ValidatorsTrait
     public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
     {
         $_rule = explode(':', $rule);
-        $idx = ($idx) ? $idx : Arr::first($_rule);
+        $idx = ($idx) ? $idx : current($_rule);
 
         $rule = [
             'idx' => $idx,
@@ -171,6 +167,5 @@ trait ValidatorsTrait
 
         return $this;
     }
-
 
 }

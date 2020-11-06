@@ -12,7 +12,7 @@ use Dg482\Mrd\Model;
  * Class Field
  * @package Dg482\Mrd\Builder\Form\fields
  */
-abstract class Field extends Model
+abstract class Field implements Model
 {
     use ValidatorsTrait;
 
@@ -443,7 +443,7 @@ abstract class Field extends Model
     {
         if (null === $this->relation && $relation) {
             $this->setData([
-                'owner' => $model->id,
+                'owner' => $model->{'id'},
                 'form' => request()->input('form'),
                 'field' => $this->getField(),
                 'relation' => $relation,
@@ -451,8 +451,8 @@ abstract class Field extends Model
 
             if ($this instanceof FieldEnum) {
                 $this->setVariant((new EnumVariant)
-                    ->make($relation->id, $relation->{'name'}))
-                    ->setFieldValue([$relation->id]);
+                    ->make($relation->{'id'}, $relation->{'name'}))
+                    ->setFieldValue([$relation->{'id'}]);
             }
 
             $this->relation = $relation;

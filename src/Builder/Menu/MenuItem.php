@@ -24,13 +24,7 @@ class MenuItem
     protected array $child = [];
 
     /** @var array[int] */
-    protected array $permission = [
-//        Role::DEVELOPER,
-//        Role::COMPANY_OWNER,
-//        Role::ADMINISTRATOR,
-//        Role::EMPLOYEE,
-//        Role::CLIENT,
-    ];
+    protected array $permission = [];
 
     /**
      * @return string

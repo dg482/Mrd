@@ -12,9 +12,10 @@
     ],
     "minimum-stability": "dev",
     "prefer-stable":true,
-    "require": {},
+    "require": {
+        "nesbot/carbon": "^2.16"
+    },
     "require-dev": {
-        "symfony/thanks": "^1.0",
         "phpunit/phpunit": "^7.4@dev",
         "mockery/mockery": "^1.0@dev",
         "orchestra/testbench": "^3.8@dev",
@@ -41,13 +42,5 @@
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "extra": {
-        "laravel": {
-            "providers": [
-                "Dg482\\Mrd\\MrdServiceProvider"
-            ],
-            "aliases": {
-                "Dg482": "Dg482\\Mrd\\MrdFacade"
-            }
-        }
     }
 }

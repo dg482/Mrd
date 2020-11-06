@@ -2,14 +2,13 @@
 
 namespace Dg482\Mrd\Resource;
 
+use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Builder\Form\BaseForms;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\FieldEnum;
 use Dg482\Mrd\Builder\Form\Fields\File;
 use Dg482\Mrd\Builder\Form\FormTrait;
 use Dg482\Mrd\Builder\Table\TableTrait;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 /**
  * Trait ResourceTrait
@@ -20,13 +19,12 @@ trait ResourceTrait
     use TableTrait, FormTrait;
 
     /**
+     * @param  AdapterInterfaces  $adapter
      * @param  string  $context
      * @return $this|Resource
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function initResource(string $context = ''): Resource
+    public function initResource(AdapterInterfaces $adapter, string $context = ''): Resource
     {
-        $adapter = app()->make(EloquentAdapter::class);
         $adapter->setModel(new $this->model);
         $this->setAdapter($adapter);
         $this->setContext($context);
@@ -53,7 +51,7 @@ trait ResourceTrait
 
         if (method_exists($form, 'getValidators')) {
             $validators = $form->getValidators();
-            if ($validators === [] && $form instanceof BaseForms){
+            if ($validators === [] && $form instanceof BaseForms) {
                 $validators = $this->getValidators();
             }
         }
@@ -66,7 +64,8 @@ trait ResourceTrait
 
         return $this->setForm(array_map(function (Field $field) use ($original, $form, $validators, $error_message) {
 
-            $method = Str::camel('field_'.$field->getField());
+
+            $method = $this->getMethodName('field_'.$field->getField());
             $key = $field->getField();
 
             if (method_exists($form, $method)) {
@@ -103,7 +102,8 @@ trait ResourceTrait
 
             if (isset($validators[$key])) {
                 array_map(function (string $rule) use (&$field, $error_message, $key) {
-                    $idx = Arr::first(explode(':', $rule));
+                    $idx = explode(':', $rule);
+                    $idx = current($idx);
                     if (isset($error_message[$key][$idx])) {
                         $field->addValidators($rule, $error_message[$key][$idx], $idx);
                     } else {
@@ -133,5 +133,15 @@ trait ResourceTrait
     protected function setForm(array $fields): array
     {
         return $fields;
+    }
+
+    /**
+     * @param  string  $value
+     * @return string
+     */
+    protected function camel(string $value): string
+    {
+        return lcfirst(str_replace(' ', '',
+            ucwords(str_replace(['-', '_'], ' ', $value))));
     }
 }
