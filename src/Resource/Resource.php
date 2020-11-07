@@ -7,7 +7,6 @@ use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Builder\Form\BaseForms;
 use Dg482\Mrd\Builder\Form\CommonFields;
 use Dg482\Mrd\Builder\Form\Fields\Field;
-use Dg482\Mrd\Builder\Form\FormModelInterface;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\Structure\Fieldset;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
@@ -20,7 +19,7 @@ use Dg482\Mrd\Resource\Actions\Update as ActionUpdate;
 /**
  * Ресурс модели
  *
- * Ресурс предоставляет общие методы для отображения моделей в табличном представление.
+ * Ресурс предоставляет общие методы для отображения модели в виде таблиц.
  *
  * В $rowActions и $actions определяются доступные действия в таблицах.
  *
@@ -74,9 +73,9 @@ class Resource
 
     /**
      * Модель формы
-     * @var string
+     * @var BaseForms
      */
-    protected string $formModel = '';
+    protected BaseForms $formModel;
 
     /**
      * @var string
@@ -103,13 +102,13 @@ class Resource
     ];
 
     /**
-     * Массив с значениями полей модели
+     * Массив со значениями полей модели
      * @var array
      */
     public array $values = [];
 
     /**
-     * Поля которые будут скрыты при построение списка полей
+     * Поля, которые будут скрыты при построении списка полей
      * @var array $hidden_fields
      */
     protected array $hidden_fields = [];
@@ -140,10 +139,15 @@ class Resource
 
     /**
      * @param  AdapterInterfaces  $adapter
+     * @return Resource
      */
-    public function setAdapter(AdapterInterfaces $adapter): void
+    public function setAdapter(AdapterInterfaces $adapter): self
     {
         $this->adapter = $adapter;
+
+        $this->setModel($adapter->getModel());
+
+        return $this;
     }
 
     /**
@@ -171,7 +175,6 @@ class Resource
 
     /**
      * Фильтр полей
-     *
      * @param  string  $method
      * @param  array  $fields
      * @return array
@@ -215,7 +218,6 @@ class Resource
 
     /**
      * Значения полей модели
-     *
      * @return array
      */
     public function getValues(): array
@@ -225,20 +227,31 @@ class Resource
 
 
     /**
-     * @return string
+     * @return Model
      */
-    public function getModel(): string
+    public function getModel(): ?Model
     {
         return $this->model;
     }
 
     /**
-     * @param  string  $model
+     * @param  Model  $model
      * @return self
      */
-    public function setModel(string $model): self
+    protected function setModel(Model $model): self
     {
-        $this->model = new $model;
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * @param  BaseForms  $model
+     * @return self
+     */
+    public function setFormModel(BaseForms $model): self
+    {
+        $this->formModel = $model;
 
         return $this;
     }
@@ -263,11 +276,11 @@ class Resource
     }
 
     /**
-     * @param  string  $model
+     * @param  Model  $model
      * @param  string|null  $relation
      * @return $this|self
      */
-    public function make(string $model, string $relation = null): self
+    public function make(Model $model, string $relation = null): self
     {
         $this->setModel($model);
         if ($relation) {
@@ -395,15 +408,11 @@ class Resource
     }
 
     /**
-     * @return FormModelInterface
+     * @return BaseForms
      */
-    public function getFormModel(): ?FormModelInterface
+    public function getFormModel(): ?BaseForms
     {
-        if (class_exists($this->formModel) && !$this->formModel instanceof FormModelInterface) {
-            return new $this->formModel;
-        }
-
-        return null;
+        return $this->formModel;
     }
 
     /**

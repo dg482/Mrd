@@ -42,13 +42,13 @@ trait ResourceTrait
     {
         $model = $this->getAdapter()->getModel();
 
-        if ($this->formModel !== '' && !class_exists($this->formModel)) {
+        if (!$this->formModel) {
             throw new Exception('Form not exist!!!');
         }
         $validators = [];
         $error_message = [];
 
-        $form = ($this->formModel !== '') ? (new $this->formModel) : $this;
+        $form = $this->formModel;
 
         if (method_exists($form, 'getValidators')) {
             $validators = $form->getValidators();

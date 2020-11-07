@@ -19,6 +19,11 @@ interface AdapterInterfaces
     public function setModel($model): self;
 
     /**
+     * @return Model
+     */
+    public function getModel(): Model;
+
+    /**
      * @param  int  $limit
      * @return IteratorAggregate
      */

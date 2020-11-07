@@ -29,27 +29,28 @@ trait TableTrait
     {
         $this->setContext(Resource::class);
 
-        if (isset($this->tables[$this->getModel()]) && $hardLoad === false) {
-            return $this->tables[$this->getModel()];
+        $cls = get_class($this->getModel());
+
+        if (isset($this->tables[$cls]) && $hardLoad === false) {
+            return $this->tables[$cls];
         }
 
         if ($this instanceof RelationResource) {
             $collection = $this->getCollection();
-            $total = ($collection) ? count($collection) : 1;
-
-            $paginator = [
-                'items' => $collection,
-                'total' => $total,
-                'perPage' => self::PAGE_SIZE,
-            ];
         } else {
             /** @var Adapter $adapter */
             $adapter = $this->getAdapter();
             $adapter->setModel(new $this->model);
 
-            /** @var   $paginator */
-            $paginator = $adapter->read($this->getPageSize());
+            /** @var array */
+            $collection = $adapter->read($this->getPageSize());
         }
+
+        $paginator = [
+            'items' => $collection ?? [],
+            'total' => ($collection) ? count($collection) : 1,
+            'perPage' => self::PAGE_SIZE,
+        ];
 
         // items table
         $items = [];
@@ -158,7 +159,7 @@ trait TableTrait
             $this->setValues($result);
         }
 
-        $this->tables[$this->getModel()] = $result;
+        $this->tables[$cls] = $result;
 
         return $result;
     }

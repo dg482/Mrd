@@ -37,6 +37,7 @@
     },
     "scripts": {
         "phpcs": "vendor/bin/phpcs -p --standard=psr2 ./src",
+        "phpcst": "vendor/bin/phpcs -p --standard=psr2 ./tests",
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },

@@ -25,10 +25,10 @@ trait FormTrait
         }
 
         return [
-            'title' => $this->model->getFormTitle(),
-            'form' => $this->model->getFormName(),
+            'title' => $this->formModel->getFormTitle(),
+            'form' => $this->formModel->getFormName(),
             'items' => $this->formFields(),
-            'actions' => $this->model->getActions(),
+            'actions' => $this->formModel->getActions(),
             'values' => $this->getValues(),
             'validator' => $this->getValidators(),
             'context' => $this->getContext(),

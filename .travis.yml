@@ -9,4 +9,5 @@ before_script:
 
 script:
   - vendor/bin/phpcs -p --standard=psr2 ./src
+  - vendor/bin/phpcs -p --standard=psr2 ./tests
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
