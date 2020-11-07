@@ -58,7 +58,6 @@ class FieldFromModel
                         break;
                     default:
                         throw new FieldNotFound(sprintf('Field type "%s" not found.', $column['type']));
-                        break;
                 }
                 break;
         }

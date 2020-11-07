@@ -16,7 +16,7 @@ interface Model
     public function update(array $request): bool;
 
     /**
-     * Получить поля автозаполнения
+     * Получить поля авто заполнения
      * @return array
      */
     public function getFillableFields(): array;
