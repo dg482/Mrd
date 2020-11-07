@@ -1,7 +1,7 @@
 # mrd
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Travis](https://img.shields.io/travis/dg482/mrd.svg?style=flat-square)](https://travis-ci.com/github/dg482/Mrd)
+[![Build Status](https://travis-ci.com/dg482/Mrd.svg?branch=master)](https://travis-ci.com/dg482/Mrd)
 [![Total Downloads](https://img.shields.io/packagist/dt/dg482/mrd.svg?style=flat-square)](https://packagist.org/packages/dg482/mrd)
 
 
