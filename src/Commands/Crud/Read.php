@@ -39,5 +39,4 @@ class Read extends Command implements CommandInterfaces
 
         return $this;
     }
-
 }

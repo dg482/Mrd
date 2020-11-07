@@ -13,6 +13,4 @@ class Integer extends Field
     const FIELD_TYPE = 'integer';
     const FIELD_TYPE_BIGINT = 'bigint';
     const FIELD_TYPE_SMALLINT = 'smallint';
-
-
 }

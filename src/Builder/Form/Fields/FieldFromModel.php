@@ -3,7 +3,7 @@
 namespace Dg482\Mrd\Builder\Form\Fields;
 
 use Dg482\Mrd\Builder\Exceptions\FieldNotFound;
-use Illuminate\Database\Eloquent\Model;
+use Dg482\Mrd\Model;
 
 /**
  * Class FieldFromModel
@@ -94,5 +94,4 @@ class FieldFromModel
 
         return $this;
     }
-
 }

@@ -19,7 +19,7 @@ abstract class Adapter implements AdapterInterfaces
 
     /**
      * @param int $limit
-     * @return IteratorAggregate
+     * @return array|bool|IteratorAggregate
      */
     public function read($limit = 1)
     {

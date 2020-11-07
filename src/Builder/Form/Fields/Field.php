@@ -7,12 +7,11 @@ use Dg482\Mrd\Builder\Form\ValidatorsTrait;
 use Carbon\Carbon;
 use Dg482\Mrd\Model;
 
-
 /**
  * Class Field
  * @package Dg482\Mrd\Builder\Form\fields
  */
-abstract class Field implements Model
+abstract class Field
 {
     use ValidatorsTrait;
 
@@ -55,25 +54,21 @@ abstract class Field implements Model
      */
     const STORAGE_BACKEND = 'backend';
 
-    /**
-     * Хранилище на клиенте
-     * @var string
-     */
-    const STORAGE_CLIENT = 'client';
-
-    /**
-     * Оформление текста
-     * @var string
-     */
-    const TEXT_DANGER = 'text-danger',
-        TEXT_WARNING = 'text-warning',
-        TEXT_SUCCESS = 'text-success',
-        TEXT_PRIMARY = 'text-primary',
-        TEXT_INFO = 'text-info';
-    /**
-     * @var string $table
-     */
-    protected $table = 'fields';
+//    /**
+//     * Хранилище на клиенте
+//     * @var string
+//     */
+//    const STORAGE_CLIENT = 'client';
+//
+//    /**
+//     * Оформление текста
+//     * @var string
+//     */
+//    const TEXT_DANGER = 'text-danger',
+//        TEXT_WARNING = 'text-warning',
+//        TEXT_SUCCESS = 'text-success',
+//        TEXT_PRIMARY = 'text-primary',
+//        TEXT_INFO = 'text-info';
 
     /**
      * Field label
@@ -88,7 +83,7 @@ abstract class Field implements Model
     protected string $field = '';
 
     /** @var array $attributes */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * Бейдж, выводится внизу поля
@@ -215,7 +210,7 @@ abstract class Field implements Model
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getFieldType(): string
     {
@@ -396,7 +391,7 @@ abstract class Field implements Model
      */
     public function getFieldValue(bool $original = false)
     {
-        if ($this->value instanceof Carbon) {
+        if ($this->value instanceof Carbon && $original === false) {
             return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
         }
 
@@ -412,6 +407,10 @@ abstract class Field implements Model
      */
     public function updateValue($value = null, ?Field $dateField = null)
     {
+        if ($dateField !== null) {
+            return $dateField->getFieldValue(false);
+        }
+
         return $value;
     }
 
@@ -444,7 +443,7 @@ abstract class Field implements Model
         if (null === $this->relation && $relation) {
             $this->setData([
                 'owner' => $model->{'id'},
-                'form' => request()->input('form'),
+                'form' => $_REQUEST['form'],
                 'field' => $this->getField(),
                 'relation' => $relation,
             ])->setFieldValue([]);

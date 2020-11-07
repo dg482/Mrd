@@ -2,7 +2,7 @@
 
 namespace Dg482\Mrd\Adapters\Interfaces;
 
-
+use Closure;
 use Dg482\Mrd\Model;
 use IteratorAggregate;
 
@@ -56,8 +56,8 @@ interface AdapterInterfaces
     public function getTableFields(Model $model): array;
 
     /**
-     * @param  \Closure|null  $filter
+     * @param  Closure|null  $filter
      * @return AdapterInterfaces
      */
-    public function setFilter(?\Closure $filter): AdapterInterfaces;
+    public function setFilter(?Closure $filter): AdapterInterfaces;
 }

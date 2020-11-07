@@ -2,7 +2,6 @@
 
 namespace Dg482\Mrd\Resource;
 
-
 /**
  * Trait RelationTrait
  * @package Dg482\Mrd\Resource
@@ -54,7 +53,7 @@ trait RelationTrait
 
         $resource->setModel(get_class($relationModel));
         $resource->getAdapter()->setModel($relationModel);
-        $resource->setCollection($collection ? $collection : collect([]));
+        $resource->setCollection($collection ? $collection : []);
         $resource->getTable(true);
 
         return $resource;

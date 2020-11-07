@@ -9,6 +9,7 @@ use Dg482\Mrd\Builder\Form\Fields\FieldEnum;
 use Dg482\Mrd\Builder\Form\Fields\File;
 use Dg482\Mrd\Builder\Form\FormTrait;
 use Dg482\Mrd\Builder\Table\TableTrait;
+use Exception;
 
 /**
  * Trait ResourceTrait
@@ -35,14 +36,14 @@ trait ResourceTrait
 
     /**
      * @return Field[]
-     * @throws \Exception
+     * @throws Exception
      */
     public function fields(): array
     {
         $model = $this->getAdapter()->getModel();
 
         if ($this->formModel !== '' && !class_exists($this->formModel)) {
-            throw new \Exception('Form not exist!!!');
+            throw new Exception('Form not exist!!!');
         }
         $validators = [];
         $error_message = [];
@@ -109,12 +110,10 @@ trait ResourceTrait
                     } else {
                         $field->addValidators($rule, null, $idx);
                     }
-
                 }, $validators[$key]);
             }
 
             return $field;
-
         }, array_filter($this->adapter->getTableFields($model), function (Field $field) {
             $id = $field->getField();
 
@@ -141,7 +140,10 @@ trait ResourceTrait
      */
     protected function camel(string $value): string
     {
-        return lcfirst(str_replace(' ', '',
-            ucwords(str_replace(['-', '_'], ' ', $value))));
+        return lcfirst(str_replace(
+            ' ',
+            '',
+            ucwords(str_replace(['-', '_'], ' ', $value))
+        ));
     }
 }

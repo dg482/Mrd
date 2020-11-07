@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Dg482\Mrd\Builder\Form;
-
 
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;

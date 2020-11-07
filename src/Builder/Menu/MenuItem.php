@@ -172,7 +172,6 @@ class MenuItem
         array_map(function (MenuItem $item) use (&$result) {
 
             array_push($result, $item->getData());
-
         }, $this->getChild());
 
         return $result;

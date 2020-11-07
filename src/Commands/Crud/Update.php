@@ -3,7 +3,7 @@
 namespace Dg482\Mrd\Commands\Crud;
 
 use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
-use Illuminate\Database\Eloquent\Model;
+use Dg482\Mrd\Model;
 
 /**
  * Class Update
@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Update extends Command implements CommandInterfaces
 {
-    /** @var Model|null */
-    private ?Model $model = null;
+    /** @var Model */
+    private Model $model;
 
     /** @var array */
     private array $data = [];
@@ -40,7 +40,7 @@ class Update extends Command implements CommandInterfaces
                             if (isset($request[$id.'|'.$field])) {
                                 $updateRelationRequest[$field] = $request[$id.'|'.$field];
                             }
-                        }, $relationModel->getFillable());
+                        }, $relationModel->getFillableFields());
 
                         if ([] !== $updateRelationRequest) {
                             $relationModel->update($updateRelationRequest);
@@ -62,10 +62,10 @@ class Update extends Command implements CommandInterfaces
     }
 
     /**
-     * @param  Model|null  $model
+     * @param  Model  $model
      * @return Update
      */
-    public function setModel(?Model $model): Update
+    public function setModel(Model $model): Update
     {
         $this->model = $model;
 
@@ -109,6 +109,4 @@ class Update extends Command implements CommandInterfaces
 
         return $this;
     }
-
-
 }

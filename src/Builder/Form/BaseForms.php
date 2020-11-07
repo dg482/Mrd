@@ -50,7 +50,7 @@ class BaseForms implements Model
     /**
      * @var mixed|Resource
      */
-    protected $_resource;
+    protected $m_resource;
 
     /**
      * @return mixed
@@ -60,7 +60,7 @@ class BaseForms implements Model
     {
         $this->resource()->setContext(BaseForms::class);
 
-        $fields = $this->_resource->fields();
+        $fields = $this->m_resource->fields();
 
         return $fields;
     }
@@ -70,7 +70,7 @@ class BaseForms implements Model
      */
     public function resource(): ?Resource
     {
-        return $this->_resource;
+        return $this->m_resource;
     }
 
     /**
@@ -109,18 +109,18 @@ class BaseForms implements Model
             array_push($this->actions, (new Button)
                 ->make('Сохранить')
                 ->setAction(self::ACTION_SAVE)
-//                ->setType('primary')
+                ->setType('primary')
                 ->setIcon('check'));
-//            array_push($this->actions, (new Button)
-//                ->make('Копировать')
-//                ->setAction(self::ACTION_REPLICATE)
-//                ->setIcon('copy'));
-//
-//            array_push($this->actions, (new Button)
-//                ->make('Отменить')
-//                ->setAction(self::ACTION_CANCEL)
-//                ->setType('danger')
-//                ->setIcon('close'));
+            array_push($this->actions, (new Button)
+                ->make('Копировать')
+                ->setAction(self::ACTION_REPLICATE)
+                ->setIcon('copy'));
+
+            array_push($this->actions, (new Button)
+                ->make('Отменить')
+                ->setAction(self::ACTION_CANCEL)
+                ->setType('danger')
+                ->setIcon('close'));
         }
 
         return $this->actions;
@@ -152,7 +152,7 @@ class BaseForms implements Model
      */
     public function hasOneField(string $relation): array
     {
-        return $this->_resource->hasOne($relation)
+        return $this->m_resource->hasOne($relation)
             ->fields();
     }
 
@@ -164,7 +164,7 @@ class BaseForms implements Model
      */
     public function hasManyField(string $relation, $fieldType = Table::FIELD_TYPE): Field
     {
-        $relationResource = $this->_resource->hasMany($relation);
+        $relationResource = $this->m_resource->hasMany($relation);
         $relationResource->setField($fieldType);
 
         switch ($relationResource->getField()) {
@@ -172,7 +172,6 @@ class BaseForms implements Model
                 $field = Select::make($relation, $relation);
 
                 array_map(function (Model $model) {
-
                 }, $relationResource->getCollection());
 
                 break;
@@ -182,9 +181,36 @@ class BaseForms implements Model
                     ->setField($relation)
                     ->setFieldValue(
                         $relationResource->getRelation() === $relation ?
-                            $relationResource->getTable() : []);
+                        $relationResource->getTable() : []
+                    );
         }
 
         return $field;
+    }
+
+    /**
+     * @param  array  $request
+     * @return bool
+     */
+    public function update(array $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFillableFields(): array
+    {
+        return [];
+    }
+
+    /**
+     * @param  array  $request
+     * @return $this|Model
+     */
+    public function create(array $request): Model
+    {
+        return $this;
     }
 }

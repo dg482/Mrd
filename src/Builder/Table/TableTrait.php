@@ -5,11 +5,12 @@ namespace Dg482\Mrd\Builder\Table;
 use Dg482\Mrd\Adapters\Adapter;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
-use Dg482\Mrd\LocalCache;
 use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Actions\ResourceAction;
 use Dg482\Mrd\Resource\RelationResource;
 use Dg482\Mrd\Resource\Resource;
+use Exception;
+use IteratorAggregate;
 
 /**
  * Trait TableTrait
@@ -22,12 +23,10 @@ trait TableTrait
      *
      * @param  bool  $hardLoad
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTable(bool $hardLoad = false): array
     {
-        /** @var LocalCache $cache */
-        $cache = app()->make(LocalCache::class);
         $this->setContext(Resource::class);
 
         if (isset($this->tables[$this->getModel()]) && $hardLoad === false) {
@@ -68,7 +67,7 @@ trait TableTrait
                 $relation = (new $relation);
                 $model = (new $relation)->getModel();
                 if (!class_exists($model)) {
-                    throw new \Exception('relation Model not exist');
+                    throw new Exception('relation Model not exist');
                 }
                 $relation->getAdapter()->setModel(new $model);
 
@@ -88,7 +87,6 @@ trait TableTrait
 
                             array_push($setColumns, $this->buildColumn($field->getField(), $field));
                         }
-
                     }, $relation->getFieldsTable());
                 }
             }, $this->relations);
@@ -129,8 +127,8 @@ trait TableTrait
                 if ($relationModel) {
                     array_map(function (Field $field) use ($item, $relation, $relationModel, &$resultItems) {
                         $id = str_replace(['|', $relation], '', $field->getField());
-                        if ($relationModel instanceof \IteratorAggregate) {
-                            $field->setFieldValue($relationModel->count());
+                        if ($relationModel instanceof IteratorAggregate) {
+                            $field->setFieldValue($relationModel);
                         } else {
                             $relationFieldMethod = $this->camel($id);
 

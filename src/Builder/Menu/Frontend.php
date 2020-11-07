@@ -2,14 +2,11 @@
 
 namespace Dg482\Mrd\Builder\Menu;
 
-
-use Dg482\Mrd\Model;
-
 /**
  * Class Frontend
  * @package Dg482\Mrd\Builder\Menu
  */
-class Frontend implements Model
+class Frontend
 {
     /** @var array */
     protected array $menu = [];

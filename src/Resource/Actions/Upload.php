@@ -16,5 +16,4 @@ class Upload extends Create
 
     /** @var string */
     protected string $text = 'Загрузить';
-
 }

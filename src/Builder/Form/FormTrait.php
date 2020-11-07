@@ -5,7 +5,8 @@ namespace Dg482\Mrd\Builder\Form;
 use Dg482\Mrd\Builder\Exceptions\ModelNotInstalled;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
-use Dg482\Mrd\Builder\Form\Structure\Fieldset;
+use Dg482\Mrd\LocalCache;
+use Exception;
 
 /**
  * Trait FormTrait
@@ -15,7 +16,7 @@ trait FormTrait
 {
     /**
      * @return array|array[]
-     * @throws \Exception
+     * @throws Exception
      */
     public function getForm(): array
     {
@@ -51,9 +52,9 @@ trait FormTrait
      */
     public function getFormField(string $name): ?Field
     {
-        $fields = [Fieldset::make('Empty fieldset', '')];
+//        $fields = [Fieldset::make('Empty fieldset', '')];
 
-        if ($formFields = $this->_formFields()) {
+        if ($formFields = $this->formFields()) {
             $items = array_filter($formFields, function (Field $field) use ($name) {
                 return $name === $field->getField();
             });
@@ -68,9 +69,9 @@ trait FormTrait
     /**
      * @return mixed
      */
-    protected function _formFields()
+    protected function formFields()
     {
-        return $this->LocalCache->withCache('schema-'.get_class($this->model), function () {
+        return $this->cache()->withCache('schema-'.get_class($this->model), function () {
             $formFields = [];
             $fields = [];
             if (method_exists($this->model, 'resourceFields')) {
@@ -92,7 +93,6 @@ trait FormTrait
             });
 
             return $formFields;
-
         }, 'resource');
     }
 
@@ -117,15 +117,14 @@ trait FormTrait
     /**
      * @param  string  $keySeparator
      * @return array
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getValidateFormRules(string $keySeparator = '|'): array
     {
         $result = ['rules' => [], 'messages' => [], 'attributes' => []];
-        $request = request();
+        $request = $this->request();
 
-        if ($formFields = $this->_formFields()) {
-            $key = $this->model->getFormName();
+        if ($formFields = $this->formFields()) {
+//            $key = $this->model->getFormName();
 
             array_map(function (Field $field) use (&$result, $request, $keySeparator) {
 
@@ -149,5 +148,15 @@ trait FormTrait
         }
 
         return $result;
+    }
+
+    public function request()
+    {
+        return $_REQUEST;
+    }
+
+    public function cache()
+    {
+        return (new LocalCache);
     }
 }

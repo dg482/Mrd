@@ -22,12 +22,12 @@ class Create extends Update
                 if (isset($request[$field])) {
                     $insert[$field] = $request[$field];
                 }
-            }, $model->getFillable());
+            }, $model->getFillableFields());
 
             if ([] !== $insert) {
-                $model = $model::create($insert);
+                $model = $model->create($insert);
 
-                return $model->id > 0;
+                return $model->{'id'} > 0;
             }
         }
 

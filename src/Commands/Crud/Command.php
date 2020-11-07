@@ -3,7 +3,6 @@
 namespace Dg482\Mrd\Commands\Crud;
 
 use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
-use Illuminate\Support\Collection;
 
 /**
  * Class Command
@@ -11,7 +10,7 @@ use Illuminate\Support\Collection;
  */
 abstract class Command
 {
-    /** @var array|Collection|bool */
+    /** @var array|bool */
     protected $result;
 
     /** @var AdapterInterfaces */
@@ -21,7 +20,7 @@ abstract class Command
     protected bool $multiple = false;
 
     /**
-     * @return array|bool|Collection
+     * @return array|bool
      */
     public function getResult()
     {
@@ -76,5 +75,4 @@ abstract class Command
 
         return $this;
     }
-
 }

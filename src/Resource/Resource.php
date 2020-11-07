@@ -62,7 +62,7 @@ class Resource
 
     /**
      * Текущее отношение в контексте ресурса
-     * @var null
+     * @var string|null
      */
     protected ?string $relation = null;
 
@@ -234,9 +234,9 @@ class Resource
 
     /**
      * @param  string  $model
-     * @return Resource
+     * @return self
      */
-    public function setModel(string $model): Resource
+    public function setModel(string $model): self
     {
         $this->model = new $model;
 
@@ -265,11 +265,14 @@ class Resource
     /**
      * @param  string  $model
      * @param  string|null  $relation
-     * @return $this|Resource
+     * @return $this|self
      */
-    public function make(string $model, string $relation = null): Resource
+    public function make(string $model, string $relation = null): self
     {
         $this->setModel($model);
+        if ($relation) {
+            $this->relation = $relation;
+        }
 
         return $this;
     }
@@ -284,9 +287,9 @@ class Resource
 
     /**
      * @param  array  $hidden_fields
-     * @return Resource
+     * @return self
      */
-    public function setHiddenFields(array $hidden_fields): Resource
+    public function setHiddenFields(array $hidden_fields): self
     {
         $this->hidden_fields = $hidden_fields;
 
@@ -303,9 +306,9 @@ class Resource
 
     /**
      * @param  array  $labels
-     * @return Resource
+     * @return self
      */
-    public function setLabels(array $labels): Resource
+    public function setLabels(array $labels): self
     {
         $this->labels = $labels;
 
@@ -344,9 +347,9 @@ class Resource
 
     /**
      * @param  string[]  $actions
-     * @return Resource
+     * @return self
      */
-    public function setActions(array $actions): Resource
+    public function setActions(array $actions): self
     {
         $this->actions = $actions;
 
@@ -363,9 +366,9 @@ class Resource
 
     /**
      * @param  string[]  $rowActions
-     * @return Resource
+     * @return self
      */
-    public function setRowActions(array $rowActions): Resource
+    public function setRowActions(array $rowActions): self
     {
         $this->rowActions = $rowActions;
 
@@ -382,9 +385,9 @@ class Resource
 
     /**
      * @param  string  $title
-     * @return Resource
+     * @return self
      */
-    public function setTitle(string $title): Resource
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -413,9 +416,9 @@ class Resource
 
     /**
      * @param  array  $relations
-     * @return Resource
+     * @return self
      */
-    public function setRelations(array $relations): Resource
+    public function setRelations(array $relations): self
     {
         $this->relations = $relations;
 
@@ -432,13 +435,12 @@ class Resource
 
     /**
      * @param  string  $context
-     * @return Resource
+     * @return self
      */
-    public function setContext(string $context): Resource
+    public function setContext(string $context): self
     {
         $this->context = $context;
 
         return $this;
     }
-
 }

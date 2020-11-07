@@ -33,5 +33,4 @@ class Table extends Field
 
         return $this;
     }
-
 }

@@ -122,11 +122,13 @@ trait ValidatorsTrait
                 switch ($rule['type']) {
                     case Text::FIELD_TYPE:
                         if (empty($rule['message'])) {
-                            $rule['message'] = $this->trans('validation.'.$setIdx.'.'.$rule['type'],
+                            $rule['message'] = $this->trans(
+                                'validation.'.$setIdx.'.'.$rule['type'],
                                 [
                                     'attribute' => '"'.$this->getName().'"',
                                     'max' => $rule[$setIdx],
-                                ]);
+                                ]
+                            );
                         }
                         break;
                     default:
@@ -167,5 +169,4 @@ trait ValidatorsTrait
 
         return $this;
     }
-
 }

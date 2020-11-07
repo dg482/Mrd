@@ -74,7 +74,8 @@ class FieldEnum extends Field
     {
         $rule = 'in:'.implode(',', array_map(function (array $variant) {
                 return $variant['id'];
-            }, $this->getVariant()));
+        }, $this->getVariant()));
+
         $this->addValidators($rule);
 
         return $this;

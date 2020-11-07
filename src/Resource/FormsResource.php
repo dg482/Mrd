@@ -2,7 +2,6 @@
 
 namespace Dg482\Mrd\Resource;
 
-
 use Dg482\Mrd\Builder\Form\BaseForms;
 
 /**
@@ -20,6 +19,5 @@ class FormsResource extends Resource
     public function __construct(string $getFormClass)
     {
         $this->model = (new BaseForms)->setModel(new $getFormClass)->getForm();
-
     }
 }
