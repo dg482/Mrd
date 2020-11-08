@@ -2,6 +2,7 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
+use Closure;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
 use Carbon\Carbon;
@@ -85,6 +86,8 @@ abstract class Field
     /** @var array $attributes */
     protected array $attributes = [];
 
+    /** @var Closure|null */
+    protected ?Closure $translator = null;
     /**
      * Бейдж, выводится внизу поля
      * @var Badge|null $badge
@@ -485,5 +488,18 @@ abstract class Field
     public function getFieldRelation()
     {
         return $this->relation;
+    }
+
+    /**
+     * @param  string  $key
+     * @param  array  $attributes
+     * @return string
+     */
+    protected function trans(string $key, array $attributes): string
+    {
+        if ($this->translator && $this->translator instanceof Closure) {
+            return $this->translator($key, $attributes);
+        }
+        return $key;
     }
 }

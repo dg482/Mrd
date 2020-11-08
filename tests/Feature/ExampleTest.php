@@ -4,8 +4,16 @@ namespace Dg482\Mrd\Tests\Feature;
 
 use Dg482\Mrd\Adapters\BaseAdapter;
 use Dg482\Mrd\BaseModel;
+use Dg482\Mrd\Builder\Exceptions\FieldNotFound;
 use Dg482\Mrd\Builder\Exceptions\ModelNotInstalled;
 use Dg482\Mrd\Builder\Form\BaseForms;
+use Dg482\Mrd\Builder\Form\Fields\Boolean;
+use Dg482\Mrd\Builder\Form\Fields\Date;
+use Dg482\Mrd\Builder\Form\Fields\Datetime;
+use Dg482\Mrd\Builder\Form\Fields\FieldFromModel;
+use Dg482\Mrd\Builder\Form\Fields\File;
+use Dg482\Mrd\Builder\Form\Fields\Integer;
+use Dg482\Mrd\Builder\Form\Fields\Text;
 use Dg482\Mrd\Resource\Resource as BaseResource;
 use Dg482\Mrd\Tests\TestCase;
 use Exception;
@@ -64,7 +72,53 @@ class ExampleTest extends TestCase
     protected function initResource()
     {
         $this->resource = $this->resource
-            ->setAdapter((new BaseAdapter)->setModel(new BaseModel))// set adapter
+            ->setAdapter(
+                (new BaseAdapter)
+                    ->setModel(new BaseModel)
+                    ->setFields($this->initFields())
+            )// set adapter
             ->setFormModel(new BaseForms);
+    }
+
+
+    protected function initFields(): array
+    {
+        $fields = [];
+        $fieldFormModel = (new FieldFromModel);
+
+        try {
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'id',
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'name',
+                'type' => Text::FIELD_TYPE,
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'photo',
+                'type' => File::FIELD_TYPE,
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'dob',
+                'type' => Date::FIELD_TYPE,
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'stars',
+                'type' => Integer::FIELD_TYPE,
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'last_visit',
+                'type' => Datetime::FIELD_TYPE,
+            ]));
+            array_push($fields, $fieldFormModel->getField([
+                'id' => 'is_blocked',
+                'type' => Boolean::FIELD_TYPE,
+            ]));
+        } catch (FieldNotFound $e) {
+            var_dump($e->getMessage());
+        }
+
+
+        return $fields;
     }
 }
