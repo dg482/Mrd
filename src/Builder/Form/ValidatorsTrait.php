@@ -3,7 +3,6 @@
 namespace Dg482\Mrd\Builder\Form;
 
 use Dg482\Mrd\Builder\Form\Fields\Field;
-use Dg482\Mrd\Builder\Form\Fields\Text;
 
 /**
  * Trait ValidatorsTrait
@@ -101,5 +100,41 @@ trait ValidatorsTrait
         $this->trigger = $trigger;
 
         return $this;
+    }
+
+    /**
+     * @param $idx
+     * @param $name
+     * @param $rule
+     */
+    protected function initRule(string $idx, string $name, array &$rule)
+    {
+        $_rule = explode(':', $idx);
+        $idx = ($idx) ? $idx : current($_rule);
+        $attribute = ['attribute' => '"'.$name.'"'];
+        switch ($idx) {
+            case 'required':
+                $rule['required'] = true;
+                break;
+            case 'max':
+            case 'size':
+            case 'min':
+                $setIdx = $idx === 'size' ? 'max' : $idx;
+                if (isset($_rule[1])) {
+                    $rule[$setIdx] = (int)$_rule[1];
+                }
+                $rule['length'] = (int)$_rule[1];
+                break;
+            case 'in':
+                $rule['type'] = 'enum';
+                $rule['enum'] = explode(',', $_rule[1]);
+                break;
+            default:
+                $rule['type'] = 'any';
+                break;
+        }
+        if (empty($rule['message'])) {
+            $rule['message'] = $this->trans('validation.'.$idx, $attribute);
+        }
     }
 }

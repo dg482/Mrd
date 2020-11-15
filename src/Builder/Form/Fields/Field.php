@@ -389,68 +389,17 @@ abstract class Field
      */
     public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
     {
-        $_rule = explode(':', $rule);
-        $idx = ($idx) ? $idx : current($_rule);
-
-        $rule = [
-            'idx' => $idx,
+        $resultRule = [
+            'idx' => '',
             'rule' => $rule,
             'trigger' => $this->trigger,
-            'message' => '',
+            'message' => $message ?? '',
+            'type' => ($this->isMultiple()) ? 'array' : $this->getFieldType(),
         ];
 
-        if (!empty($message)) {
-            $rule['message'] = $message;
-        }
+        $this->initRule($rule, $this->getName(), $resultRule);
 
-        if ($this->isMultiple()) {
-            $rule['type'] = 'array';
-        }
-
-        switch ($idx) {
-            case 'required':
-                $rule['required'] = true;
-                if (empty($rule['message'])) {
-                    $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
-                }
-                break;
-            case 'max':
-            case 'size':
-            case 'min':
-                $setIdx = $idx === 'size' ? 'max' : $idx;
-                if (isset($_rule[1])) {
-                    $rule[$setIdx] = (int)$_rule[1];
-                }
-                $rule['type'] = $this->getFieldType();
-                $rule['length'] = (int)$_rule[1];
-                switch ($rule['type']) {
-                    case Text::FIELD_TYPE:
-                        if (empty($rule['message'])) {
-                            $rule['message'] = $this->trans(
-                                'validation.'.$setIdx.'.'.$rule['type'],
-                                [
-                                    'attribute' => '"'.$this->getName().'"',
-                                    'max' => $rule[$setIdx],
-                                ]
-                            );
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 'in':
-                $rule['type'] = 'enum';
-                $rule['enum'] = array_map(function ($id) {
-                    return (int)$id;
-                }, explode(',', $_rule[1]));
-                $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
-                break;
-            default:
-                $rule['type'] = 'any';
-                break;
-        }
-        array_push($this->validators, $rule);
+        array_push($this->validators, $resultRule);
 
         return $this;
     }
