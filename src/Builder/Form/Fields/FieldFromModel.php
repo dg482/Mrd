@@ -56,6 +56,9 @@ class FieldFromModel
                     case Boolean::FIELD_TYPE:
                         $field = (new Boolean);
                         break;
+                    case File::FIELD_TYPE:
+                        $field = (new File);
+                        break;
                     default:
                         throw new FieldNotFound(sprintf('Field type "%s" not found.', $column['type']));
                 }

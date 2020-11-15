@@ -4,6 +4,7 @@ namespace Dg482\Mrd\Builder\Table;
 
 use Dg482\Mrd\Adapters\Adapter;
 use Dg482\Mrd\Builder\Form\Fields\Field;
+use Dg482\Mrd\Builder\Form\Fields\File;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
 use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Actions\ResourceAction;
@@ -218,10 +219,11 @@ trait TableTrait
      */
     protected function buildColumn($id, $field): array
     {
+        $fieldId = $field->id ?? $id;
         $column = [
-            'id' => $field->id ?? $id,
-            'key' => $field->id ?? $id,
-            Field::NAME => $field->{Field::NAME},
+            'id' => $fieldId,
+            'key' => $fieldId,
+            Field::NAME => $field->{Field::NAME} ?? $fieldId,
             Field::TYPE => $field->getFieldType(),
             'dataIndex' => $id,
             'ellipsis' => true,
@@ -230,11 +232,10 @@ trait TableTrait
         ];
 
         switch ($column[Field::TYPE]) {
-            case 'file':
+            case File::FIELD_TYPE:
                 $column['scopedSlots'] = [
                     'customRender' => 'file',
                 ];
-                $column['width'];
                 break;
             default:
                 break;
