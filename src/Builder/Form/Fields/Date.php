@@ -32,4 +32,19 @@ class Date extends Datetime
 
         return Carbon::createFromTimestamp($value)->format('Y-m-d');
     }
+
+    /**
+     * значение поля модели/сборное значение
+     *
+     * @param  bool  $original
+     * @return string
+     */
+    public function getFieldValue(bool $original = false)
+    {
+        if ($this->value instanceof Carbon && $original === false) {
+            return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        }
+
+        return $this->value;
+    }
 }

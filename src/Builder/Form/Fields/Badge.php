@@ -2,8 +2,6 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
-use Dg482\Mrd\Model;
-
 /**
  * Class Badge
  * @package Dg482\Mrd\Builder\Form\Fields

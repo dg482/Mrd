@@ -5,7 +5,6 @@ namespace Dg482\Mrd\Builder\Form\Fields;
 use Closure;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
-use Carbon\Carbon;
 use Dg482\Mrd\Model;
 
 /**
@@ -15,6 +14,9 @@ use Dg482\Mrd\Model;
 abstract class Field
 {
     use ValidatorsTrait;
+
+    /** @var int|null $id */
+    public ?int $id;
 
     /**
      * Имя поля
@@ -116,8 +118,8 @@ abstract class Field
     /** @var string */
     protected string $placeholder = '';
 
-    /** @var string */
-    protected string $value = '';
+    /** @var ?string */
+    protected ?string $value = '';
 
     /** @var int */
     protected int $width = 100;
@@ -176,7 +178,7 @@ abstract class Field
     public function getFormField(): array
     {
         return [
-            'id' => empty($this->id) ? md5($this->getName().mktime(true)) : $this->id,
+            'id' => empty($this->id) ? mktime() + rand(1, 99999) : $this->id,
             self::NAME => $this->getName(),
             self::TYPE => $this->getFieldType(),
             'field' => $this->getField(),
@@ -347,7 +349,7 @@ abstract class Field
     }
 
     /**
-     * @return null
+     * @return ?Badge
      */
     public function getBadge()
     {
@@ -391,12 +393,12 @@ abstract class Field
      * значение поля модели/сборное значение
      *
      * @param  bool  $original
-     * @return string
+     * @return ?string
      */
     public function getFieldValue(bool $original = false)
     {
-        if ($this->value instanceof Carbon && $original === false) {
-            return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        if ($original) {
+            return $this->value;
         }
 
         return $this->value;
@@ -405,12 +407,13 @@ abstract class Field
     /**
      * Обновление значения поля
      *
-     * @param  null  $value
+     * @param  ?string  $value
      * @param  Field|null  $dateField
      * @return null
      */
     public function updateValue($value = null, ?Field $dateField = null)
     {
+        // TODO: добавить реализацию обновления значения поля
         if ($dateField !== null) {
             return $dateField->getFieldValue(false);
         }
@@ -522,6 +525,7 @@ abstract class Field
         if ($translator && $translator instanceof Closure) {
             return $translator($key, $attributes);
         }
+
         return $key;
     }
 }
