@@ -8,6 +8,9 @@ namespace Dg482\Mrd\Builder\Form\Fields;
  */
 class EnumVariant
 {
+    /** @var int|null $id*/
+    public ?int $id;
+
     /** @var string */
     const NAME = 'value';
 
@@ -24,7 +27,7 @@ class EnumVariant
      */
     public function make(int $id, string $name)
     {
-        $this->id = (int) $id;
+        $this->id = (int)$id;
         $this->{self::NAME} = $name;
 
         return $this;

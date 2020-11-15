@@ -14,15 +14,4 @@ class Datetime extends Field
 
     /** @var string */
     const FIELD_TYPE = 'datetime';
-
-
-    /**
-     * @param  null  $value
-     * @param  Field|null  $dateField
-     * @return string
-     */
-    public function updateValue($value = null, ?Field $dateField = null)
-    {
-        return Carbon::createFromTimestamp($value)->format(Carbon::DEFAULT_TO_STRING_FORMAT);
-    }
 }

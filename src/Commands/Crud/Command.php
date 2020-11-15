@@ -3,12 +3,13 @@
 namespace Dg482\Mrd\Commands\Crud;
 
 use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
+use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
 
 /**
  * Class Command
  * @package Dg482\Mrd\Commands\Crud
  */
-abstract class Command
+abstract class Command implements CommandInterfaces
 {
     /** @var array|bool */
     protected $result;
@@ -47,7 +48,7 @@ abstract class Command
     }
 
     /**
-     * @param bool $multiple
+     * @param  bool  $multiple
      * @return $this
      */
     public function setMultiple(bool $multiple): self
@@ -66,7 +67,7 @@ abstract class Command
     }
 
     /**
-     * @param AdapterInterfaces $adapter
+     * @param  AdapterInterfaces  $adapter
      * @return $this
      */
     public function setAdapter(AdapterInterfaces $adapter): self

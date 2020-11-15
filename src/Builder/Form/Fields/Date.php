@@ -16,20 +16,17 @@ class Date extends Datetime
     const FIELD_TYPE = 'date';
 
     /**
-     * @param  null  $value
-     * @param  Field|null  $dateField
+     * значение поля модели/сборное значение
+     *
+     * @param  bool  $original
      * @return string
      */
-    public function updateValue($value = null, ?Field $dateField = null)
+    public function getFieldValue(bool $original = false)
     {
-        if (empty($value)) {
-            return null;
+        if ($this->value instanceof Carbon && $original === false) {
+            return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
         }
 
-        if ($timestamp = strtotime($value)) {
-            $value = $timestamp;
-        }
-
-        return Carbon::createFromTimestamp($value)->format('Y-m-d');
+        return $this->value;
     }
 }

@@ -2,14 +2,13 @@
 
 namespace Dg482\Mrd\Commands\Crud;
 
-use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
 use Dg482\Mrd\Model;
 
 /**
  * Class Update
  * @package Dg482\Mrd\Commands\Crud
  */
-class Update extends Command implements CommandInterfaces
+class Update extends Command
 {
     /** @var Model */
     private Model $model;

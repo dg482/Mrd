@@ -2,10 +2,11 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
-use Closure;
+use Dg482\Mrd\Builder\Form\AttributeTrait;
+use Dg482\Mrd\Builder\Form\BadgeTrait;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
+use Dg482\Mrd\Builder\Form\TranslateTrait;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
-use Carbon\Carbon;
 use Dg482\Mrd\Model;
 
 /**
@@ -14,7 +15,10 @@ use Dg482\Mrd\Model;
  */
 abstract class Field
 {
-    use ValidatorsTrait;
+    use ValidatorsTrait, BadgeTrait, TranslateTrait, AttributeTrait;
+
+    /** @var int|null $id */
+    public ?int $id;
 
     /**
      * Имя поля
@@ -55,22 +59,6 @@ abstract class Field
      */
     const STORAGE_BACKEND = 'backend';
 
-//    /**
-//     * Хранилище на клиенте
-//     * @var string
-//     */
-//    const STORAGE_CLIENT = 'client';
-//
-//    /**
-//     * Оформление текста
-//     * @var string
-//     */
-//    const TEXT_DANGER = 'text-danger',
-//        TEXT_WARNING = 'text-warning',
-//        TEXT_SUCCESS = 'text-success',
-//        TEXT_PRIMARY = 'text-primary',
-//        TEXT_INFO = 'text-info';
-
     /**
      * Field label
      * @var string $name
@@ -82,24 +70,6 @@ abstract class Field
      * @var string $field
      */
     protected string $field = '';
-
-    /** @var array $attributes */
-    protected array $attributes = [];
-
-    /** @var Closure|null */
-    protected ?Closure $translator = null;
-
-    /**
-     * Бейдж, выводится внизу поля
-     * @var Badge|null $badge
-     */
-    protected ?Badge $badge = null;
-
-    /**
-     * Коллекция бейджей
-     * @var array $badges
-     */
-    protected array $badges = [];
 
     /**
      * Поле выключено?
@@ -116,8 +86,8 @@ abstract class Field
     /** @var string */
     protected string $placeholder = '';
 
-    /** @var string */
-    protected string $value = '';
+    /** @var ?string */
+    protected ?string $value = '';
 
     /** @var int */
     protected int $width = 100;
@@ -131,43 +101,6 @@ abstract class Field
     /** @var Model|null */
     protected ?Model $relation;
 
-    /**
-     * @param  bool  $set
-     * @return $this
-     */
-    public function showTable($set = true): self
-    {
-        $this->attributes['showTable'] = $set;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShowTable(): bool
-    {
-        return isset($this->attributes['showTable']) ? true === $this->attributes['showTable'] : true;
-    }
-
-    /**
-     * @param  bool  $set
-     * @return $this
-     */
-    public function showForm($set = true): self
-    {
-        $this->attributes['showForm'] = $set;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShowForm(): bool
-    {
-        return isset($this->attributes['showForm']) ? true === $this->attributes['showForm'] : true;
-    }
 
     /**
      * Массив параметров поля для отрисовки в UI
@@ -175,15 +108,18 @@ abstract class Field
      */
     public function getFormField(): array
     {
+        $badge = $this->getBadge();
+        $badges = $this->getBadges();
+
         return [
-            'id' => empty($this->id) ? md5($this->getName().mktime(true)) : $this->id,
+            'id' => empty($this->id) ? time() + rand(1, 99999) : $this->id,
             self::NAME => $this->getName(),
             self::TYPE => $this->getFieldType(),
             'field' => $this->getField(),
             'variant' => ($this instanceof FieldEnum) ? $this->getVariant() : [],
             'items' => ($this instanceof BaseStructure) ? $this->getItems() : [],
-            'badge' => $this->badge ? $this->badge->getData() : null,
-            'badges' => ($this->badges !== []) ? array_map(function (Badge $badge) {
+            'badge' => $badge !== null ? $badge->getData() : null,
+            'badges' => ($badges !== []) ? array_map(function (Badge $badge) {
                 return $badge->getData();
             }, $this->badges) : [],
             'disabled' => $this->isDisabled(),
@@ -347,36 +283,6 @@ abstract class Field
     }
 
     /**
-     * @return null
-     */
-    public function getBadge()
-    {
-        return $this->badge;
-    }
-
-    /**
-     * @param $badge
-     * @return $this
-     */
-    public function setBadge(Badge $badge): self
-    {
-        $this->badge = $badge;
-
-        return $this;
-    }
-
-    /**
-     * @param  Badge  $badge
-     * @return $this
-     */
-    public function pushBadge(Badge $badge): self
-    {
-        array_push($this->badges, $badge);
-
-        return $this;
-    }
-
-    /**
      * @param $value
      * @return $this
      */
@@ -391,31 +297,15 @@ abstract class Field
      * значение поля модели/сборное значение
      *
      * @param  bool  $original
-     * @return string
+     * @return ?string
      */
     public function getFieldValue(bool $original = false)
     {
-        if ($this->value instanceof Carbon && $original === false) {
-            return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        if ($original) {
+            return $this->value;
         }
 
         return $this->value;
-    }
-
-    /**
-     * Обновление значения поля
-     *
-     * @param  null  $value
-     * @param  Field|null  $dateField
-     * @return null
-     */
-    public function updateValue($value = null, ?Field $dateField = null)
-    {
-        if ($dateField !== null) {
-            return $dateField->getFieldValue(false);
-        }
-
-        return $value;
     }
 
     /**
@@ -492,36 +382,25 @@ abstract class Field
     }
 
     /**
-     * @return Closure|null
+     * @param  string  $rule
+     * @param  string|null  $message
+     * @param  string|null  $idx
+     * @return $this
      */
-    public function getTranslator(): ?Closure
+    public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
     {
-        return $this->translator;
-    }
+        $resultRule = [
+            'idx' => '',
+            'rule' => $rule,
+            'trigger' => $this->trigger,
+            'message' => $message ?? '',
+            'type' => ($this->isMultiple()) ? 'array' : $this->getFieldType(),
+        ];
 
-    /**
-     * @param  Closure|null  $translator
-     * @return Field
-     */
-    public function setTranslator(?Closure $translator): Field
-    {
-        $this->translator = $translator;
+        $this->initRule($rule, $this->getName(), $resultRule);
+
+        array_push($this->validators, $resultRule);
 
         return $this;
-    }
-
-
-    /**
-     * @param  string  $key
-     * @param  array  $attributes
-     * @return string
-     */
-    protected function trans(string $key, array $attributes): string
-    {
-        $translator = $this->getTranslator();
-        if ($translator && $translator instanceof Closure) {
-            return $translator($key, $attributes);
-        }
-        return $key;
     }
 }

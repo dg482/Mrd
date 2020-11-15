@@ -34,7 +34,7 @@ class BaseForms implements Model
     /** @var string */
     protected string $formName = 'ui';
 
-    /** @var $model Model */
+    /** @var Model $model */
     private Model $model;
 
     /**
@@ -170,9 +170,9 @@ class BaseForms implements Model
         switch ($relationResource->getField()) {
             case Select::FIELD_TYPE:
                 $field = Select::make($relation, $relation);
-
-                array_map(function (Model $model) {
-                }, $relationResource->getCollection());
+//                TODO: add element to select field
+//                array_map(function (Model $model) {
+//                }, $relationResource->getCollection());
 
                 break;
             case Table::FIELD_TYPE:

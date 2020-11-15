@@ -6,7 +6,6 @@ use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Commands\Crud\Command;
 use Dg482\Mrd\Commands\Crud\Read;
 use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
-use IteratorAggregate;
 
 /**
  * Class Adapter
@@ -19,7 +18,7 @@ abstract class Adapter implements AdapterInterfaces
 
     /**
      * @param int $limit
-     * @return array|bool|IteratorAggregate
+     * @return array|bool
      */
     public function read($limit = 1)
     {

@@ -7,6 +7,7 @@ use Dg482\Mrd\BaseModel;
 use Dg482\Mrd\Builder\Exceptions\FieldNotFound;
 use Dg482\Mrd\Builder\Exceptions\ModelNotInstalled;
 use Dg482\Mrd\Builder\Form\BaseForms;
+use Dg482\Mrd\Builder\Form\Fields\Badge;
 use Dg482\Mrd\Builder\Form\Fields\Boolean;
 use Dg482\Mrd\Builder\Form\Fields\Date;
 use Dg482\Mrd\Builder\Form\Fields\Datetime;
@@ -90,10 +91,16 @@ class ExampleTest extends TestCase
             array_push($fields, $fieldFormModel->getField([
                 'id' => 'id',
             ]));
-            array_push($fields, $fieldFormModel->getField([
+
+            $text = $fieldFormModel->getField([
                 'id' => 'name',
                 'type' => Text::FIELD_TYPE,
-            ]));
+            ]);
+
+            $text->setBadge((new Badge)->make('Danger', Badge::TYPE_DANGER));
+            $text->pushBadge((new Badge)->make('Warning', Badge::TYPE_WARNING));
+
+            array_push($fields, $text);
             array_push($fields, $fieldFormModel->getField([
                 'id' => 'photo',
                 'type' => File::FIELD_TYPE,

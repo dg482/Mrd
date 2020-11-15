@@ -67,9 +67,10 @@ class FieldFromModel
 
 
         $field->setField($column['id'])
-            ->setName($column['id'])
-            ->showTable($show)
-            ->showForm($show);
+            ->setName($column['id']);
+
+        $field->showTable($show);
+        $field->showForm($show);
 
         if ($this->model && $this->model->{$column['id']}) {
             $field->setFieldValue($this->model->{$column['id']});
