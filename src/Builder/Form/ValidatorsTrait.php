@@ -109,9 +109,15 @@ trait ValidatorsTrait
      */
     protected function initRule(string $idx, string $name, array &$rule)
     {
-        $_rule = explode(':', $idx);
-        $idx = ($idx) ? $idx : current($_rule);
-        $attribute = ['attribute' => '"'.$name.'"'];
+
+        $idx = $this->getRuleIdx($idx);
+
+        $attribute = [
+            'attribute' => '"'.$name.'"',
+        ];
+
+        $arguments = $this->getRuleArgument($idx);
+
         switch ($idx) {
             case 'required':
                 $rule['required'] = true;
@@ -119,15 +125,14 @@ trait ValidatorsTrait
             case 'max':
             case 'size':
             case 'min':
-                $setIdx = $idx === 'size' ? 'max' : $idx;
-                if (isset($_rule[1])) {
-                    $rule[$setIdx] = (int)$_rule[1];
+                if (isset($arguments[1])) {
+                    $rule[$idx === 'size' ? 'max' : $idx] = (int)$arguments[1];
+                    $rule['length'] = (int)$arguments[1];
                 }
-                $rule['length'] = (int)$_rule[1];
                 break;
             case 'in':
                 $rule['type'] = 'enum';
-                $rule['enum'] = explode(',', $_rule[1]);
+                $rule['enum'] = explode(',', $arguments[1]);
                 break;
             default:
                 $rule['type'] = 'any';
@@ -136,5 +141,25 @@ trait ValidatorsTrait
         if (empty($rule['message'])) {
             $rule['message'] = $this->trans('validation.'.$idx, $attribute);
         }
+    }
+
+    /**
+     * @param  string  $idx
+     * @return string
+     */
+    private function getRuleIdx(string $idx): string
+    {
+        $_rule = $this->getRuleArgument($idx);
+
+        return (count($_rule)) ? current($_rule) : $idx;
+    }
+
+    /**
+     * @param  string  $rule
+     * @return array
+     */
+    private function getRuleArgument(string $rule): array
+    {
+        return explode(':', $rule);
     }
 }
