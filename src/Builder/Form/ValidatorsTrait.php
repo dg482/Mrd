@@ -132,7 +132,7 @@ trait ValidatorsTrait
                 break;
             case 'in':
                 $rule['type'] = 'enum';
-                $rule['enum'] = explode(',', $arguments[1]);
+                $rule['enum'] = (isset($arguments[1])) ? explode(',', $arguments[1]) : [];
                 break;
             default:
                 $rule['type'] = 'any';
