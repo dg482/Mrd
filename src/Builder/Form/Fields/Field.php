@@ -88,6 +88,7 @@ abstract class Field
 
     /** @var Closure|null */
     protected ?Closure $translator = null;
+
     /**
      * Бейдж, выводится внизу поля
      * @var Badge|null $badge
@@ -491,14 +492,35 @@ abstract class Field
     }
 
     /**
+     * @return Closure|null
+     */
+    public function getTranslator(): ?Closure
+    {
+        return $this->translator;
+    }
+
+    /**
+     * @param  Closure|null  $translator
+     * @return Field
+     */
+    public function setTranslator(?Closure $translator): Field
+    {
+        $this->translator = $translator;
+
+        return $this;
+    }
+
+
+    /**
      * @param  string  $key
      * @param  array  $attributes
      * @return string
      */
     protected function trans(string $key, array $attributes): string
     {
-        if ($this->translator && $this->translator instanceof Closure) {
-            return $this->translator($key, $attributes);
+        $translator = $this->getTranslator();
+        if ($translator && $translator instanceof Closure) {
+            return $translator($key, $attributes);
         }
         return $key;
     }

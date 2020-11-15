@@ -115,7 +115,7 @@ class ExampleTest extends TestCase
                 'type' => Boolean::FIELD_TYPE,
             ]));
         } catch (FieldNotFound $e) {
-            var_dump($e->getMessage());
+            return ['message' => $e->getMessage()];
         }
 
 
