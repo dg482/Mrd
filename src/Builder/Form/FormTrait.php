@@ -136,7 +136,7 @@ trait FormTrait
                     if (isset($rule['message']) && !empty($rule['message'])) {
                         $result['messages'][$key.'.'.$rule['idx']] = $rule['message'];
                     }
-                }, $field->getValidators($request));
+                }, $field->getValidators());
 
                 if ($result['rules'][$key] !== []) {
                     $result['attributes'][$key] = $field->getName();
