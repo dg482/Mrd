@@ -26,7 +26,8 @@ tools:
     excluded_dirs:
       - vendor
       - tests
-  external_code_coverage: false
+  external_code_coverage:
+    timeout: 600    # Timeout in seconds.
 checks:
   php:
     code_rating: true
