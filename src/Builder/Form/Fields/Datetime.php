@@ -17,7 +17,7 @@ class Datetime extends Field
 
 
     /**
-     * @param  null  $value
+     * @param  ?int|string  $value
      * @param  Field|null  $dateField
      * @return string
      */

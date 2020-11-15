@@ -16,7 +16,7 @@ class Date extends Datetime
     const FIELD_TYPE = 'date';
 
     /**
-     * @param  null  $value
+     * @param  ?int|string $value
      * @param  Field|null  $dateField
      * @return string
      */

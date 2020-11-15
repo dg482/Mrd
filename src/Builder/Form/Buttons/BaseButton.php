@@ -21,9 +21,9 @@ abstract class BaseButton
 
     /**
      * can be set to circle, round or omitted
-     * @var ?string
+     * @var string
      */
-    public ?string $shape = null;
+    public string $shape = 'round';
 
     /**
      * can be set to primary, ghost, dashed, danger, link or omitted (meaning default)

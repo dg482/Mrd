@@ -2,17 +2,14 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
-use Illuminate\Database\Eloquent\Model;
+use Dg482\Mrd\Model;
 
 /**
  * Class Badge
  * @package Dg482\Mrd\Builder\Form\Fields
  */
-class Badge extends Model
+class Badge
 {
-    /** @var string $table */
-    public $table = 'field_badges';
-
     /**
      * Типы
      */
