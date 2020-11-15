@@ -2,13 +2,11 @@
 
 namespace Dg482\Mrd\Commands\Crud;
 
-use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
-
 /**
  * Class Read
  * @package Dg482\Mrd\Commands\Crud
  */
-class Read extends Command implements CommandInterfaces
+class Read extends Command
 {
     /** @var int $perPage */
     protected int $perPage = 25;

@@ -25,7 +25,7 @@ interface AdapterInterfaces
 
     /**
      * @param  int  $limit
-     * @return IteratorAggregate
+     * @return array|bool
      */
     public function read($limit = 1);
 
