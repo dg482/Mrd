@@ -16,24 +16,6 @@ class Date extends Datetime
     const FIELD_TYPE = 'date';
 
     /**
-     * @param  ?int|string $value
-     * @param  Field|null  $dateField
-     * @return string
-     */
-    public function updateValue($value = null, ?Field $dateField = null)
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        if ($timestamp = strtotime($value)) {
-            $value = $timestamp;
-        }
-
-        return Carbon::createFromTimestamp($value)->format('Y-m-d');
-    }
-
-    /**
      * значение поля модели/сборное значение
      *
      * @param  bool  $original

@@ -411,15 +411,6 @@ abstract class Field
     }
 
     /**
-     * Обновление значения поля
-     *
-     * @param  ?string  $value
-     * @param  Field|null  $dateField
-     * @return null
-     */
-    abstract public function updateValue($value = null, ?Field $dateField = null);
-
-    /**
      * @return bool
      */
     public function isMultiple(): bool
