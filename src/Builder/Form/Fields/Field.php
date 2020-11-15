@@ -178,7 +178,7 @@ abstract class Field
     public function getFormField(): array
     {
         return [
-            'id' => empty($this->id) ? mktime() + rand(1, 99999) : $this->id,
+            'id' => empty($this->id) ? time() + rand(1, 99999) : $this->id,
             self::NAME => $this->getName(),
             self::TYPE => $this->getFieldType(),
             'field' => $this->getField(),
