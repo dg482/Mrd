@@ -417,15 +417,7 @@ abstract class Field
      * @param  Field|null  $dateField
      * @return null
      */
-    public function updateValue($value = null, ?Field $dateField = null)
-    {
-        // TODO: добавить реализацию обновления значения поля
-        if ($dateField !== null) {
-            return $dateField->getFieldValue(false);
-        }
-
-        return $value;
-    }
+    abstract public function updateValue($value = null, ?Field $dateField = null);
 
     /**
      * @return bool
@@ -534,6 +526,7 @@ abstract class Field
 
         return $key;
     }
+
     /**
      * @param  string  $rule
      * @param  string|null  $message
@@ -572,10 +565,10 @@ abstract class Field
             case 'min':
                 $setIdx = $idx === 'size' ? 'max' : $idx;
                 if (isset($_rule[1])) {
-                    $rule[$setIdx] = (int) $_rule[1];
+                    $rule[$setIdx] = (int)$_rule[1];
                 }
                 $rule['type'] = $this->getFieldType();
-                $rule['length'] = (int) $_rule[1];
+                $rule['length'] = (int)$_rule[1];
                 switch ($rule['type']) {
                     case Text::FIELD_TYPE:
                         if (empty($rule['message'])) {
@@ -595,7 +588,7 @@ abstract class Field
             case 'in':
                 $rule['type'] = 'enum';
                 $rule['enum'] = array_map(function ($id) {
-                    return (int) $id;
+                    return (int)$id;
                 }, explode(',', $_rule[1]));
                 $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
                 break;
