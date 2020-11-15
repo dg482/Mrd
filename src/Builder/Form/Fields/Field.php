@@ -2,6 +2,7 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
+use Dg482\Mrd\Builder\Form\AttributeTrait;
 use Dg482\Mrd\Builder\Form\BadgeTrait;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\TranslateTrait;
@@ -14,7 +15,7 @@ use Dg482\Mrd\Model;
  */
 abstract class Field
 {
-    use ValidatorsTrait, BadgeTrait, TranslateTrait;
+    use ValidatorsTrait, BadgeTrait, TranslateTrait, AttributeTrait;
 
     /** @var int|null $id */
     public ?int $id;
@@ -70,9 +71,6 @@ abstract class Field
      */
     protected string $field = '';
 
-    /** @var array $attributes */
-    protected array $attributes = [];
-
     /**
      * Поле выключено?
      * @var bool $disabled
@@ -103,43 +101,6 @@ abstract class Field
     /** @var Model|null */
     protected ?Model $relation;
 
-    /**
-     * @param  bool  $set
-     * @return $this
-     */
-    public function showTable($set = true): self
-    {
-        $this->attributes['showTable'] = $set;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShowTable(): bool
-    {
-        return isset($this->attributes['showTable']) ? true === $this->attributes['showTable'] : true;
-    }
-
-    /**
-     * @param  bool  $set
-     * @return $this
-     */
-    public function showForm($set = true): self
-    {
-        $this->attributes['showForm'] = $set;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShowForm(): bool
-    {
-        return isset($this->attributes['showForm']) ? true === $this->attributes['showForm'] : true;
-    }
 
     /**
      * Массив параметров поля для отрисовки в UI
@@ -418,5 +379,79 @@ abstract class Field
     public function getFieldRelation()
     {
         return $this->relation;
+    }
+
+    /**
+     * @param  string  $rule
+     * @param  string|null  $message
+     * @param  string|null  $idx
+     * @return $this
+     */
+    public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
+    {
+        $_rule = explode(':', $rule);
+        $idx = ($idx) ? $idx : current($_rule);
+
+        $rule = [
+            'idx' => $idx,
+            'rule' => $rule,
+            'trigger' => $this->trigger,
+            'message' => '',
+        ];
+
+        if (!empty($message)) {
+            $rule['message'] = $message;
+        }
+
+        if ($this->isMultiple()) {
+            $rule['type'] = 'array';
+        }
+
+        switch ($idx) {
+            case 'required':
+                $rule['required'] = true;
+                if (empty($rule['message'])) {
+                    $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
+                }
+                break;
+            case 'max':
+            case 'size':
+            case 'min':
+                $setIdx = $idx === 'size' ? 'max' : $idx;
+                if (isset($_rule[1])) {
+                    $rule[$setIdx] = (int)$_rule[1];
+                }
+                $rule['type'] = $this->getFieldType();
+                $rule['length'] = (int)$_rule[1];
+                switch ($rule['type']) {
+                    case Text::FIELD_TYPE:
+                        if (empty($rule['message'])) {
+                            $rule['message'] = $this->trans(
+                                'validation.'.$setIdx.'.'.$rule['type'],
+                                [
+                                    'attribute' => '"'.$this->getName().'"',
+                                    'max' => $rule[$setIdx],
+                                ]
+                            );
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 'in':
+                $rule['type'] = 'enum';
+                $rule['enum'] = array_map(function ($id) {
+                    return (int)$id;
+                }, explode(',', $_rule[1]));
+                $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
+                break;
+            default:
+                $rule['type'] = 'any';
+                break;
+        }
+        array_push($this->validators, $rule);
+
+        return $this;
     }
 }
