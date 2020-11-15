@@ -2,8 +2,9 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
-use Closure;
+use Dg482\Mrd\Builder\Form\BadgeTrait;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
+use Dg482\Mrd\Builder\Form\TranslateTrait;
 use Dg482\Mrd\Builder\Form\ValidatorsTrait;
 use Dg482\Mrd\Model;
 
@@ -13,7 +14,7 @@ use Dg482\Mrd\Model;
  */
 abstract class Field
 {
-    use ValidatorsTrait;
+    use ValidatorsTrait, BadgeTrait, TranslateTrait;
 
     /** @var int|null $id */
     public ?int $id;
@@ -57,22 +58,6 @@ abstract class Field
      */
     const STORAGE_BACKEND = 'backend';
 
-//    /**
-//     * Хранилище на клиенте
-//     * @var string
-//     */
-//    const STORAGE_CLIENT = 'client';
-//
-//    /**
-//     * Оформление текста
-//     * @var string
-//     */
-//    const TEXT_DANGER = 'text-danger',
-//        TEXT_WARNING = 'text-warning',
-//        TEXT_SUCCESS = 'text-success',
-//        TEXT_PRIMARY = 'text-primary',
-//        TEXT_INFO = 'text-info';
-
     /**
      * Field label
      * @var string $name
@@ -87,21 +72,6 @@ abstract class Field
 
     /** @var array $attributes */
     protected array $attributes = [];
-
-    /** @var Closure|null */
-    protected ?Closure $translator = null;
-
-    /**
-     * Бейдж, выводится внизу поля
-     * @var Badge|null $badge
-     */
-    protected ?Badge $badge = null;
-
-    /**
-     * Коллекция бейджей
-     * @var array $badges
-     */
-    protected array $badges = [];
 
     /**
      * Поле выключено?
@@ -132,12 +102,6 @@ abstract class Field
 
     /** @var Model|null */
     protected ?Model $relation;
-
-    /**
-     * Массив валидаторов
-     * @var array
-     */
-    protected array $validators = [];
 
     /**
      * @param  bool  $set
@@ -183,6 +147,9 @@ abstract class Field
      */
     public function getFormField(): array
     {
+        $badge = $this->getBadge();
+        $badges = $this->getBadges();
+
         return [
             'id' => empty($this->id) ? time() + rand(1, 99999) : $this->id,
             self::NAME => $this->getName(),
@@ -190,8 +157,8 @@ abstract class Field
             'field' => $this->getField(),
             'variant' => ($this instanceof FieldEnum) ? $this->getVariant() : [],
             'items' => ($this instanceof BaseStructure) ? $this->getItems() : [],
-            'badge' => $this->badge ? $this->badge->getData() : null,
-            'badges' => ($this->badges !== []) ? array_map(function (Badge $badge) {
+            'badge' => $badge !== null ? $badge->getData() : null,
+            'badges' => ($badges !== []) ? array_map(function (Badge $badge) {
                 return $badge->getData();
             }, $this->badges) : [],
             'disabled' => $this->isDisabled(),
@@ -355,36 +322,6 @@ abstract class Field
     }
 
     /**
-     * @return ?Badge
-     */
-    public function getBadge()
-    {
-        return $this->badge;
-    }
-
-    /**
-     * @param $badge
-     * @return $this
-     */
-    public function setBadge(Badge $badge): self
-    {
-        $this->badge = $badge;
-
-        return $this;
-    }
-
-    /**
-     * @param  Badge  $badge
-     * @return $this
-     */
-    public function pushBadge(Badge $badge): self
-    {
-        array_push($this->badges, $badge);
-
-        return $this;
-    }
-
-    /**
      * @param $value
      * @return $this
      */
@@ -481,114 +418,5 @@ abstract class Field
     public function getFieldRelation()
     {
         return $this->relation;
-    }
-
-    /**
-     * @return Closure|null
-     */
-    public function getTranslator(): ?Closure
-    {
-        return $this->translator;
-    }
-
-    /**
-     * @param  Closure|null  $translator
-     * @return Field
-     */
-    public function setTranslator(?Closure $translator): Field
-    {
-        $this->translator = $translator;
-
-        return $this;
-    }
-
-
-    /**
-     * @param  string  $key
-     * @param  array  $attributes
-     * @return string
-     */
-    protected function trans(string $key, array $attributes): string
-    {
-        $translator = $this->getTranslator();
-        if ($translator && $translator instanceof Closure) {
-            return $translator($key, $attributes);
-        }
-
-        return $key;
-    }
-
-    /**
-     * @param  string  $rule
-     * @param  string|null  $message
-     * @param  string|null  $idx
-     * @return $this
-     */
-    public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
-    {
-        $_rule = explode(':', $rule);
-        $idx = ($idx) ? $idx : current($_rule);
-
-        $rule = [
-            'idx' => $idx,
-            'rule' => $rule,
-            'trigger' => $this->trigger,
-            'message' => '',
-        ];
-
-        if (!empty($message)) {
-            $rule['message'] = $message;
-        }
-
-        if ($this->isMultiple()) {
-            $rule['type'] = 'array';
-        }
-
-        switch ($idx) {
-            case 'required':
-                $rule['required'] = true;
-                if (empty($rule['message'])) {
-                    $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
-                }
-                break;
-            case 'max':
-            case 'size':
-            case 'min':
-                $setIdx = $idx === 'size' ? 'max' : $idx;
-                if (isset($_rule[1])) {
-                    $rule[$setIdx] = (int)$_rule[1];
-                }
-                $rule['type'] = $this->getFieldType();
-                $rule['length'] = (int)$_rule[1];
-                switch ($rule['type']) {
-                    case Text::FIELD_TYPE:
-                        if (empty($rule['message'])) {
-                            $rule['message'] = $this->trans(
-                                'validation.'.$setIdx.'.'.$rule['type'],
-                                [
-                                    'attribute' => '"'.$this->getName().'"',
-                                    'max' => $rule[$setIdx],
-                                ]
-                            );
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 'in':
-                $rule['type'] = 'enum';
-                $rule['enum'] = array_map(function ($id) {
-                    return (int)$id;
-                }, explode(',', $_rule[1]));
-                $rule['message'] = $this->trans('validation.'.$idx, ['attribute' => '"'.$this->getName().'"']);
-                break;
-            default:
-                $rule['type'] = 'any';
-                break;
-        }
-        array_push($this->validators, $rule);
-
-        return $this;
     }
 }
