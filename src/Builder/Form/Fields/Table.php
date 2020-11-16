@@ -18,9 +18,9 @@ class Table extends Field
      */
     public function setFieldValue($value): Field
     {
-        $value = $value === [] ? [
-            'columns'=>[],
-            'data'=>[],
+        $this->value = ($value === []) ? [
+            'columns' => [],
+            'data' => [],
             'pagination' => [
                 'total' => 0,
                 'current' => 1,
@@ -29,7 +29,6 @@ class Table extends Field
             ],
         ] : $value;
 
-        $this->value = $value;
 
         return $this;
     }

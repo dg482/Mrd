@@ -2,6 +2,8 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
+use Closure;
+use Dg482\Mrd\Builder\Form\Fields\Interfaces\FileStorageInterface;
 use Dg482\Mrd\Model;
 
 /**
@@ -27,8 +29,8 @@ class File extends FieldEnum
     /** @var int */
     protected int $type = 0;
 
-    /** @var null|\Closure */
-    protected ?\Closure $store = null;
+    /** @var null|Closure */
+    protected ?Closure $store = null;
 
     /**
      * @return array
@@ -66,25 +68,21 @@ class File extends FieldEnum
 
     /**
      * @param  Model  $model
-     * @param  Model|null  $relation
+     * @param  ?Model  $relation
      * @return $this
      */
     public function setFieldRelation(Model $model, ?Model $relation): Field
     {
-        if ($relation && isset($relation->id) && $relation->id) {
+        if (($relation instanceof Model) && isset($relation->id) && $relation->id) {
             $this
                 ->setData([
-                    'owner' => $model->id,
+                    'owner' => $model->id ?? 0,
                     'type' => $this->getType(),
-                    'form' => request()->input('form'),
+                    'form' => $this->request('form'),
                     'field' => $this->getField(),
                     'relation' => $relation,
                 ])->setFieldValue([]);
-
-            $this->setVariant((new EnumVariant)
-                ->make($relation->id, $relation->getPath()))
-                ->setFieldValue([$relation->id]);
-
+            
             $this->relation = $relation;
         }
 
@@ -101,18 +99,18 @@ class File extends FieldEnum
     }
 
     /**
-     * @return \Closure|null
+     * @return Closure|null
      */
-    public function getStore(): ?\Closure
+    public function getStore(): ?Closure
     {
         return $this->store;
     }
 
     /**
-     * @param  \Closure|null  $store
+     * @param  Closure|null  $store
      * @return File
      */
-    public function setStore(?\Closure $store): File
+    public function setStore(?Closure $store): File
     {
         $this->store = $store;
 
@@ -145,14 +143,5 @@ class File extends FieldEnum
     public function storeFile($file)
     {
         return $this->getStore()($file);
-    }
-
-    /**
-     * @param  null  $request
-     * @return array
-     */
-    public function getValidators($request = null): array
-    {
-        return $this->validators;
     }
 }

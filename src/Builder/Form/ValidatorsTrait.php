@@ -25,6 +25,9 @@ trait ValidatorsTrait
     /** @var bool */
     protected bool $required = false;
 
+    /** @var bool */
+    protected bool $multiple = false;
+
     /**
      * @return $this|Field
      */
