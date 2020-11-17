@@ -68,7 +68,7 @@ trait TableTrait
         $paginator = [
             'items' => $collection ?? [],
             'total' => ($collection) ? count($collection) : 1,
-            'perPage' => self::PAGE_SIZE,
+            'perPage' => $this->getPageSize(),
         ];
 
         // items table
@@ -330,7 +330,7 @@ trait TableTrait
     /**
      * @return AdapterInterfaces
      */
-    protected function getAdapter(): AdapterInterfaces
+    public function getAdapter(): AdapterInterfaces
     {
         return $this->adapter;
     }
@@ -339,7 +339,7 @@ trait TableTrait
      * @param  AdapterInterfaces  $adapter
      * @return Resource
      */
-    protected function setAdapter(AdapterInterfaces $adapter): self
+    public function setAdapter(AdapterInterfaces $adapter): self
     {
         $this->adapter = $adapter;
 
@@ -353,6 +353,6 @@ trait TableTrait
      */
     private function getPageSize(): int
     {
-        return $this->request('limit');
+        return $this->request('limit', 25);
     }
 }

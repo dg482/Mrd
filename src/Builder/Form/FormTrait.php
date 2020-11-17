@@ -152,12 +152,13 @@ trait FormTrait
 
     /**
      * @param  string|null  $name
+     * @param  null  $default
      * @return array|mixed|null
      */
-    public function request(?string $name = null)
+    public function request(?string $name = null, $default = null)
     {
         if ($name) {
-            return $_REQUEST[$name] ?? null;
+            return $_REQUEST[$name] ?? $default;
         }
 
         return $_REQUEST;
