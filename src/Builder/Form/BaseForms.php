@@ -8,6 +8,7 @@ use Dg482\Mrd\Builder\Form\Fields\Select;
 use Dg482\Mrd\Builder\Form\Fields\Table;
 use Dg482\Mrd\Model;
 use Dg482\Mrd\Resource\Resource;
+use Exception;
 
 /**
  * Class BaseForms
@@ -54,15 +55,13 @@ class BaseForms implements Model
 
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fields()
     {
         $this->resource()->setContext(BaseForms::class);
 
-        $fields = $this->m_resource->fields();
-
-        return $fields;
+        return $this->m_resource->fields();
     }
 
     /**
@@ -148,7 +147,7 @@ class BaseForms implements Model
     /**
      * @param  string  $relation
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function hasOneField(string $relation): array
     {
@@ -160,7 +159,7 @@ class BaseForms implements Model
      * @param  string  $relation
      * @param  string  $fieldType
      * @return Field
-     * @throws \Exception
+     * @throws Exception
      */
     public function hasManyField(string $relation, $fieldType = Table::FIELD_TYPE): Field
     {

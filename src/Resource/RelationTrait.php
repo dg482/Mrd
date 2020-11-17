@@ -22,10 +22,10 @@ trait RelationTrait
         $resource->setContext($this->getContext());
         if ($model === null) {
             $model = $resource->getModel();
+            $resource->setModel($model);
             $model = (new $model);
         }
 
-        $resource->setModel(get_class($model));
         $resource->getAdapter()->setModel($model);
 
         return $resource;

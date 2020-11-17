@@ -77,10 +77,6 @@ class Resource
      */
     protected BaseForms $formModel;
 
-    /**
-     * @var string
-     */
-    protected string $context = '';
 
     /**
      * Список доступных действий для таблицы
@@ -229,7 +225,7 @@ class Resource
     /**
      * @return Model
      */
-    public function getModel(): ?Model
+    protected function getModel(): ?Model
     {
         return $this->model;
     }
@@ -430,25 +426,6 @@ class Resource
     public function setRelations(array $relations): self
     {
         $this->relations = $relations;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContext(): string
-    {
-        return $this->context;
-    }
-
-    /**
-     * @param  string  $context
-     * @return self
-     */
-    public function setContext(string $context): self
-    {
-        $this->context = $context;
 
         return $this;
     }

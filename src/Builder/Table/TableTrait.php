@@ -20,6 +20,11 @@ use IteratorAggregate;
 trait TableTrait
 {
     /**
+     * @var string
+     */
+    protected string $context = '';
+
+    /**
      * Таблица
      *
      * @param  bool  $hardLoad
@@ -267,5 +272,24 @@ trait TableTrait
         return array_filter($this->fields(), function (Field $field) {
             return $field->isShowTable();
         });
+    }
+
+    /**
+     * @return string
+     */
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param  string  $context
+     * @return self
+     */
+    public function setContext(string $context): self
+    {
+        $this->context = $context;
+
+        return $this;
     }
 }
