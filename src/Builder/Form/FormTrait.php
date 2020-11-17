@@ -150,8 +150,17 @@ trait FormTrait
         return $result;
     }
 
-    public function request()
+    /**
+     * @param  string|null  $name
+     * @param  string|int|array|null  $default
+     * @return array|mixed|null
+     */
+    public function request(?string $name = null, $default = null)
     {
+        if ($name) {
+            return $_REQUEST[$name] ?? $default;
+        }
+
         return $_REQUEST;
     }
 

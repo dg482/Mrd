@@ -3,6 +3,7 @@
 namespace Dg482\Mrd\Builder\Table;
 
 use Dg482\Mrd\Adapters\Adapter;
+use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\File;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
@@ -19,6 +20,23 @@ use IteratorAggregate;
  */
 trait TableTrait
 {
+    /**
+     * Адаптер для работы с БД
+     * @var AdapterInterfaces|Adapter
+     */
+    protected $adapter;
+
+    /**
+     * @var string
+     */
+    protected string $context = '';
+
+    /**
+     * Текущая модель
+     * @var Model|null
+     */
+    protected ?Model $model = null;
+
     /**
      * Таблица
      *
@@ -50,7 +68,7 @@ trait TableTrait
         $paginator = [
             'items' => $collection ?? [],
             'total' => ($collection) ? count($collection) : 1,
-            'perPage' => self::PAGE_SIZE,
+            'perPage' => $this->getPageSize(),
         ];
 
         // items table
@@ -63,36 +81,36 @@ trait TableTrait
 
         $relations = [];
 
-        if ($this->relations) {
-            array_map(function ($relation) use (&$setColumns, &$relations) {
-                /** @var RelationResource $relation */
-                $relation = (new $relation);
-                $model = (new $relation)->getModel();
-                if (!class_exists($model)) {
-                    throw new Exception('relation Model not exist');
-                }
-                $relation->getAdapter()->setModel(new $model);
-
-                if ($relation instanceof RelationResource) {
-                    $relations[$relation->getRelationName()] = [];
-                    $skipFields = ['id', 'action'];
-                    $labels = $relation->getLabels();
-                    array_map(function (Field $field) use ($relation, $skipFields, $labels, &$relations, &$setColumns) {
-                        if ($field->isShowTable() && !in_array($field->getField(), $skipFields)
-                            && (!$field instanceof Hidden)) {
-                            $name = $relation->getRelationName().'|'.$field->getField();
-                            // set relation labels
-                            $this->labels[$name] = $labels[$field->getField()] ?? $field->getField();
-                            $field->setField($name);
-
-                            array_push($relations[$relation->getRelationName()], $field);
-
-                            array_push($setColumns, $this->buildColumn($field->getField(), $field));
-                        }
-                    }, $relation->getFieldsTable());
-                }
-            }, $this->relations);
-        }
+//        if ($this->relations) {
+//            array_map(function ($relation) use (&$setColumns, &$relations) {
+//                $relation = (new $relation);
+//                $model = (new $relation)->getModel();
+//                if (!class_exists($model)) {
+//                    throw new Exception('relation Model not exist');
+//                }
+//                $relation->getAdapter()->setModel(new $model);
+//
+//                if ($relation instanceof RelationResource) {
+//                    $relations[$relation->getRelationName()] = [];
+//                    $skipFields = ['id', 'action'];
+//                    $labels = $relation->getLabels();
+//                    array_map(function (Field $field) use ($relation, $skipFields, $labels, &$relations,
+// &$setColumns) {
+//                        if ($field->isShowTable() && !in_array($field->getField(), $skipFields)
+//                            && (!$field instanceof Hidden)) {
+//                            $name = $relation->getRelationName().'|'.$field->getField();
+//                            // set relation labels
+//                            $this->labels[$name] = $labels[$field->getField()] ?? $field->getField();
+//                            $field->setField($name);
+//
+//                            array_push($relations[$relation->getRelationName()], $field);
+//
+//                            array_push($setColumns, $this->buildColumn($field->getField(), $field));
+//                        }
+//                    }, $relation->getFieldsTable());
+//                }
+//            }, $this->relations);
+//        }
 
         // колонка с действиями
         array_push($setColumns, [
@@ -267,5 +285,74 @@ trait TableTrait
         return array_filter($this->fields(), function (Field $field) {
             return $field->isShowTable();
         });
+    }
+
+    /**
+     * @return string
+     */
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param  string  $context
+     * @return self
+     */
+    public function setContext(string $context): self
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Model
+     */
+    protected function getModel(): ?Model
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param  Model  $model
+     * @return self
+     */
+    protected function setModel(Model $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+
+    /**
+     * @return AdapterInterfaces
+     */
+    public function getAdapter(): AdapterInterfaces
+    {
+        return $this->adapter;
+    }
+
+    /**
+     * @param  AdapterInterfaces  $adapter
+     * @return Resource
+     */
+    public function setAdapter(AdapterInterfaces $adapter): self
+    {
+        $this->adapter = $adapter;
+
+        $this->setModel($adapter->getModel());
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    private function getPageSize(): int
+    {
+        return $this->request('limit', 25);
     }
 }

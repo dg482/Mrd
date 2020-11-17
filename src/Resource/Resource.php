@@ -36,28 +36,10 @@ class Resource
     use ResourceTrait, RelationTrait, ValidatorsTrait, CommonFields;
 
     /**
-     * Кол-во элементов на страницу
-     * @var int
-     */
-    const PAGE_SIZE = 50;
-
-    /**
-     * Адаптер для работы с БД
-     * @var AdapterInterfaces|Adapter
-     */
-    protected $adapter;
-
-    /**
      * Команда адаптера
      * @var string
      */
     protected string $command = Read::class;
-
-    /**
-     * Текущая модель ресурса
-     * @var Model|null
-     */
-    protected ?Model $model = null;
 
     /**
      * Текущее отношение в контексте ресурса
@@ -77,10 +59,6 @@ class Resource
      */
     protected BaseForms $formModel;
 
-    /**
-     * @var string
-     */
-    protected string $context = '';
 
     /**
      * Список доступных действий для таблицы
@@ -128,35 +106,6 @@ class Resource
      */
     protected string $title = '';
 
-
-    /**
-     * @return AdapterInterfaces
-     */
-    public function getAdapter(): AdapterInterfaces
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @param  AdapterInterfaces  $adapter
-     * @return Resource
-     */
-    public function setAdapter(AdapterInterfaces $adapter): self
-    {
-        $this->adapter = $adapter;
-
-        $this->setModel($adapter->getModel());
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPageSize(): int
-    {
-        return self::PAGE_SIZE;
-    }
 
     /**
      * Поля формы ресурса
@@ -223,26 +172,6 @@ class Resource
     public function getValues(): array
     {
         return $this->values;
-    }
-
-
-    /**
-     * @return Model
-     */
-    public function getModel(): ?Model
-    {
-        return $this->model;
-    }
-
-    /**
-     * @param  Model  $model
-     * @return self
-     */
-    protected function setModel(Model $model): self
-    {
-        $this->model = $model;
-
-        return $this;
     }
 
     /**
@@ -430,25 +359,6 @@ class Resource
     public function setRelations(array $relations): self
     {
         $this->relations = $relations;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContext(): string
-    {
-        return $this->context;
-    }
-
-    /**
-     * @param  string  $context
-     * @return self
-     */
-    public function setContext(string $context): self
-    {
-        $this->context = $context;
 
         return $this;
     }

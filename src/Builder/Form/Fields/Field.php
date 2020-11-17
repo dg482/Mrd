@@ -86,8 +86,8 @@ abstract class Field
     /** @var string */
     protected string $placeholder = '';
 
-    /** @var ?string */
-    protected ?string $value = '';
+    /** @var mixed */
+    protected $value;
 
     /** @var int */
     protected int $width = 100;
@@ -329,7 +329,7 @@ abstract class Field
 
     /**
      * @param  Model  $model
-     * @param  Model|null  $relation
+     * @param  ?Model  $relation
      * @return $this
      */
     public function setFieldRelation(Model $model, ?Model $relation): Field
@@ -337,7 +337,7 @@ abstract class Field
         if (null === $this->relation && $relation) {
             $this->setData([
                 'owner' => $model->{'id'},
-                'form' => $_REQUEST['form'],
+                'form' => $this->request('form'),
                 'field' => $this->getField(),
                 'relation' => $relation,
             ])->setFieldValue([]);
@@ -390,7 +390,7 @@ abstract class Field
     public function addValidators(string $rule, ?string $message = '', ?string $idx = ''): Field
     {
         $resultRule = [
-            'idx' => '',
+            'idx' => $idx,
             'rule' => $rule,
             'trigger' => $this->trigger,
             'message' => $message ?? '',
@@ -402,5 +402,14 @@ abstract class Field
         array_push($this->validators, $resultRule);
 
         return $this;
+    }
+
+    /**
+     * @param  string  $name
+     * @return mixed|null
+     */
+    protected function request(string $name)
+    {
+        return $_REQUEST[$name] ?? null;
     }
 }

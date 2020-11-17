@@ -23,8 +23,10 @@ class Date extends Datetime
      */
     public function getFieldValue(bool $original = false)
     {
-        if ($this->value instanceof Carbon && $original === false) {
-            return $this->value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        if ($original === false) {
+            $value = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $this->value);
+
+            return $value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
         }
 
         return $this->value;

@@ -23,8 +23,8 @@ class Select extends FieldEnum
         }
 
         $variant = array_filter($this->getVariant(), function (array $variant) {
-            if ($this->isMultiple() && is_array($this->value)) {
-                return in_array((int) $variant['id'], $this->value);
+            if ($this->isMultiple()) {
+                return in_array((int) $variant['id'], (array)$this->value);
             }
 
             return (int) $variant['id'] === (int) $this->value;
