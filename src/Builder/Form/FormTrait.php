@@ -152,7 +152,7 @@ trait FormTrait
 
     /**
      * @param  string|null  $name
-     * @param  null  $default
+     * @param  string|int|array|null  $default
      * @return array|mixed|null
      */
     public function request(?string $name = null, $default = null)

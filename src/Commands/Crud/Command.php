@@ -21,7 +21,7 @@ abstract class Command implements CommandInterfaces
     protected bool $multiple = false;
 
     /**
-     * @return array|bool
+     * @return array|null
      */
     public function getResult()
     {

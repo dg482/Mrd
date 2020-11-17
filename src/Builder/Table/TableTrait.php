@@ -81,36 +81,36 @@ trait TableTrait
 
         $relations = [];
 
-        if ($this->relations) {
-            array_map(function ($relation) use (&$setColumns, &$relations) {
-                /** @var RelationResource $relation */
-                $relation = (new $relation);
-                $model = (new $relation)->getModel();
-                if (!class_exists($model)) {
-                    throw new Exception('relation Model not exist');
-                }
-                $relation->getAdapter()->setModel(new $model);
-
-                if ($relation instanceof RelationResource) {
-                    $relations[$relation->getRelationName()] = [];
-                    $skipFields = ['id', 'action'];
-                    $labels = $relation->getLabels();
-                    array_map(function (Field $field) use ($relation, $skipFields, $labels, &$relations, &$setColumns) {
-                        if ($field->isShowTable() && !in_array($field->getField(), $skipFields)
-                            && (!$field instanceof Hidden)) {
-                            $name = $relation->getRelationName().'|'.$field->getField();
-                            // set relation labels
-                            $this->labels[$name] = $labels[$field->getField()] ?? $field->getField();
-                            $field->setField($name);
-
-                            array_push($relations[$relation->getRelationName()], $field);
-
-                            array_push($setColumns, $this->buildColumn($field->getField(), $field));
-                        }
-                    }, $relation->getFieldsTable());
-                }
-            }, $this->relations);
-        }
+//        if ($this->relations) {
+//            array_map(function ($relation) use (&$setColumns, &$relations) {
+//                $relation = (new $relation);
+//                $model = (new $relation)->getModel();
+//                if (!class_exists($model)) {
+//                    throw new Exception('relation Model not exist');
+//                }
+//                $relation->getAdapter()->setModel(new $model);
+//
+//                if ($relation instanceof RelationResource) {
+//                    $relations[$relation->getRelationName()] = [];
+//                    $skipFields = ['id', 'action'];
+//                    $labels = $relation->getLabels();
+//                    array_map(function (Field $field) use ($relation, $skipFields, $labels, &$relations,
+// &$setColumns) {
+//                        if ($field->isShowTable() && !in_array($field->getField(), $skipFields)
+//                            && (!$field instanceof Hidden)) {
+//                            $name = $relation->getRelationName().'|'.$field->getField();
+//                            // set relation labels
+//                            $this->labels[$name] = $labels[$field->getField()] ?? $field->getField();
+//                            $field->setField($name);
+//
+//                            array_push($relations[$relation->getRelationName()], $field);
+//
+//                            array_push($setColumns, $this->buildColumn($field->getField(), $field));
+//                        }
+//                    }, $relation->getFieldsTable());
+//                }
+//            }, $this->relations);
+//        }
 
         // колонка с действиями
         array_push($setColumns, [
