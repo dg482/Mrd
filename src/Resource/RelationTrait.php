@@ -2,6 +2,8 @@
 
 namespace Dg482\Mrd\Resource;
 
+use Dg482\Mrd\BaseModel;
+
 /**
  * Trait RelationTrait
  * @package Dg482\Mrd\Resource
@@ -14,19 +16,23 @@ trait RelationTrait
      */
     public function hasOne(string $relation): RelationResource
     {
+        /** @var BaseModel $model */
         $model = $this->getAdapter()->getModel()->{$relation};
 
         $resource = (isset($this->relations[$relation]) && class_exists($this->relations[$relation])) ?
             new $this->relations[$relation] : new RelationResource();
         $resource->setRelation($relation);
         $resource->setContext($this->getContext());
-        if ($model === null) {
+
+        if (!$model) {
             $model = $resource->getModel();
             $resource->setModel($model);
             $model = (new $model);
         }
 
-        $resource->getAdapter()->setModel($model);
+        if ($model) {
+            $resource->getAdapter()->setModel($model);
+        }
 
         return $resource;
     }

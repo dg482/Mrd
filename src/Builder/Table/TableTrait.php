@@ -3,6 +3,7 @@
 namespace Dg482\Mrd\Builder\Table;
 
 use Dg482\Mrd\Adapters\Adapter;
+use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Fields\File;
 use Dg482\Mrd\Builder\Form\Fields\Hidden;
@@ -20,9 +21,21 @@ use IteratorAggregate;
 trait TableTrait
 {
     /**
+     * Адаптер для работы с БД
+     * @var AdapterInterfaces|Adapter
+     */
+    protected $adapter;
+
+    /**
      * @var string
      */
     protected string $context = '';
+
+    /**
+     * Текущая модель
+     * @var Model|null
+     */
+    protected ?Model $model = null;
 
     /**
      * Таблица
@@ -291,5 +304,55 @@ trait TableTrait
         $this->context = $context;
 
         return $this;
+    }
+
+
+    /**
+     * @return Model
+     */
+    protected function getModel(): ?Model
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param  Model  $model
+     * @return self
+     */
+    protected function setModel(Model $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+
+    /**
+     * @return AdapterInterfaces
+     */
+    protected function getAdapter(): AdapterInterfaces
+    {
+        return $this->adapter;
+    }
+
+    /**
+     * @param  AdapterInterfaces  $adapter
+     * @return Resource
+     */
+    protected function setAdapter(AdapterInterfaces $adapter): self
+    {
+        $this->adapter = $adapter;
+
+        $this->setModel($adapter->getModel());
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    private function getPageSize(): int
+    {
+        return $this->request('limit');
     }
 }
