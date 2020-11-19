@@ -1,0 +1,74 @@
+openapi: 3.0.0
+tags:
+  - name: Example
+info:
+  title: Base
+  version: '1.0'
+  description: Basic API example
+  contact:
+    name: Andrey
+    email: d.g.dev482@gmail.com
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/resource/{resourceId}/form':
+    parameters:
+      - schema:
+          type: string
+        name: resourceId
+        in: path
+        required: true
+    get:
+      summary: Get resource form
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  form:
+                    type: object
+                    required:
+                      - id
+                      - items
+                    properties:
+                      id:
+                        type: number
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            '':
+                              $ref: '#/components/schemas/Field'
+                required:
+                  - success
+                  - form
+      operationId: get-resource-resourceId-form
+      description: Получение формы ресурса
+components:
+  schemas:
+    Field:
+      title: Field
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+      description: Base field model
+  securitySchemes:
+    JWT-TOKEN:
+      type: http
+      scheme: bearer
+security:
+  - JWT-TOKEN: []
