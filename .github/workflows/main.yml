@@ -5,10 +5,19 @@ on:
 name: static analysis
 
 jobs:
-  run_tests:
-    runs-on:  ubuntu-latest 
+ psalm:
+    name: Psalm
+    runs-on: ubuntu-latest
     steps:
-      - name: Psalm – Static Analysis for PHP
-          # You may pin to the exact commit or the version.
-          # uses: psalm/psalm-github-actions@2e545d38ff4387b370449e2673088cc8dc40cf1d
-        uses: psalm/psalm-github-actions@1.1.2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Psalm
+        uses: docker://vimeo/psalm-github-actions
+        with:
+          security_analysis: true
+          report_file: results.sarif
+      - name: Upload Security Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
