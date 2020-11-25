@@ -9,10 +9,7 @@ namespace Dg482\Mrd;
 class BaseModel implements Model
 {
 
-    public function update(array $request): bool
-    {
-        return false;
-    }
+    public function update(array $request): bool { return false; }
 
     public function getFillableFields(): array
     {
