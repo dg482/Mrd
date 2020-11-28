@@ -17,10 +17,10 @@ abstract class Adapter implements AdapterInterfaces
     private $command;
 
     /**
-     * @param int $limit
-     * @return array|bool
+     * @param  int  $limit
+     * @return array
      */
-    public function read($limit = 1)
+    public function read($limit = 1): array
     {
         $cmd = (new Read())
             ->setAdapter($this)
@@ -51,7 +51,7 @@ abstract class Adapter implements AdapterInterfaces
     }
 
     /**
-     * @param CommandInterfaces $cmd
+     * @param  CommandInterfaces  $cmd
      */
     public function setCommand(CommandInterfaces $cmd): void
     {
