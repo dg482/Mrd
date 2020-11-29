@@ -218,7 +218,7 @@ class BaseForms implements Model
     {
         $user_id = $field->getFieldValue(true);
         if (empty($user_id)) {
-            $field->setFieldValue(0);
+            $field->setFieldValue('0');
         }
 
         return (new Hidden(0, (string)$field->getFieldValue(true), $this->getForm()))

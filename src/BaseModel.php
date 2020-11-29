@@ -8,6 +8,11 @@ namespace Dg482\Mrd;
  */
 class BaseModel implements Model
 {
+    /** @var int */
+    public int $id = 0;
+
+    /** @var string */
+    public string $name = '';
 
     public function update(array $request): bool
     {

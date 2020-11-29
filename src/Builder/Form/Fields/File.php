@@ -3,6 +3,7 @@
 namespace Dg482\Mrd\Builder\Form\Fields;
 
 use Closure;
+use Dg482\Mrd\BaseModel;
 use Dg482\Mrd\Builder\Form\Fields\Interfaces\FileStorageInterface;
 use Dg482\Mrd\Model;
 
@@ -67,11 +68,11 @@ class File extends FieldEnum
 
 
     /**
-     * @param  Model  $model
-     * @param  ?Model  $relation
+     * @param  BaseModel  $model
+     * @param  BaseModel  $relation
      * @return $this
      */
-    public function setFieldRelation(Model $model, ?Model $relation): Field
+    public function setFieldRelation(BaseModel $model, BaseModel $relation): Field
     {
         if (($relation instanceof Model) && isset($relation->id) && $relation->id) {
             $this
@@ -81,7 +82,7 @@ class File extends FieldEnum
                     'form' => $this->request('form'),
                     'field' => $this->getField(),
                     'relation' => $relation,
-                ])->setFieldValue([]);
+                ])->setFieldValue('');
 
             $this->relation = $relation;
         }

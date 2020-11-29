@@ -72,9 +72,10 @@ class FieldEnum extends Field
      */
     public function initValidators(): Field
     {
-        $rule = 'in:'.implode(',', array_map(function (array $variant) {
-                return $variant['id'];
-        }, $this->getVariant()));
+        $rule = 'in:'.
+            implode(',', array_map(function (array $variant): int {
+                return (int)$variant['id'];
+            }, $this->getVariant()));
 
         $this->addValidators($rule);
 

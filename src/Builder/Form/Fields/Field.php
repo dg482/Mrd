@@ -2,6 +2,7 @@
 
 namespace Dg482\Mrd\Builder\Form\Fields;
 
+use Dg482\Mrd\BaseModel;
 use Dg482\Mrd\Builder\Form\AttributeTrait;
 use Dg482\Mrd\Builder\Form\BadgeTrait;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
@@ -166,7 +167,7 @@ abstract class Field
      */
     public function getFieldType(): string
     {
-        return $this::FIELD_TYPE;
+        return (string)$this::FIELD_TYPE;
     }
 
     /**
@@ -295,10 +296,10 @@ abstract class Field
     }
 
     /**
-     * @param $value
+     * @param  string  $value
      * @return $this
      */
-    public function setFieldValue($value): self
+    public function setFieldValue(string $value): self
     {
         $this->value = $value;
 
@@ -340,28 +341,25 @@ abstract class Field
     }
 
     /**
-     * @param  Model  $model
-     * @param  Model  $relation
+     * @param  BaseModel  $model
+     * @param  BaseModel  $relation
      * @return $this
      */
-    public function setFieldRelation(Model $model, Model $relation): Field
+    public function setFieldRelation(BaseModel $model, BaseModel $relation): Field
     {
-        if (null === $this->relation && $relation) {
-            $this->setData([
-                'owner' => $model->{'id'},
-                'form' => $this->request('form'),
-                'field' => $this->getField(),
-                'relation' => $relation,
-            ])->setFieldValue([]);
+        $this->setData([
+            'owner' => $model,
+            'form' => $this->request('form'),
+            'field' => $this->getField(),
+            'relation' => $relation,
+        ])->setFieldValue('');
 
-            if ($this instanceof FieldEnum) {
-                $this->setVariant((new EnumVariant)
-                    ->make($relation->{'id'}, $relation->{'name'}))
-                    ->setFieldValue([$relation->{'id'}]);
-            }
-
-            $this->relation = $relation;
+        if ($this instanceof FieldEnum) {
+            $this->setVariant((new EnumVariant)
+                ->make($relation->id, $relation->name))
+                ->setFieldValue((string)$relation->id);
         }
+        $this->relation = $relation;
 
         return $this;
     }
