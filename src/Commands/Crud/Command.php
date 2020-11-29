@@ -11,8 +11,8 @@ use Dg482\Mrd\Commands\Interfaces\CommandInterfaces;
  */
 abstract class Command implements CommandInterfaces
 {
-    /** @var array|bool */
-    protected $result;
+    /** @var array */
+    protected array $result;
 
     /** @var AdapterInterfaces */
     protected AdapterInterfaces $adapter;
@@ -21,18 +21,26 @@ abstract class Command implements CommandInterfaces
     protected bool $multiple = false;
 
     /**
-     * @return array|null
+     * Command constructor.
      */
-    public function getResult()
+    public function __construct()
     {
-        return $this->result;
+        $this->result = [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getResult(): array
+    {
+        return (array)$this->result;
     }
 
     /**
      * @param $result
-     * @return $this
+     * @return CommandInterfaces
      */
-    public function setResult($result): self
+    public function setResult($result): CommandInterfaces
     {
         $this->result = $result;
 

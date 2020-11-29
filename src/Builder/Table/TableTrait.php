@@ -33,9 +33,9 @@ trait TableTrait
 
     /**
      * Текущая модель
-     * @var Model|null
+     * @var Model
      */
-    protected ?Model $model = null;
+    protected Model $model;
 
     /**
      * Таблица

@@ -12,4 +12,15 @@ interface CommandInterfaces
      * @return bool
      */
     public function execute(): bool;
+
+    /**
+     * @return array
+     */
+    public function getResult(): array;
+
+    /**
+     * @param $result
+     * @return CommandInterfaces
+     */
+    public function setResult($result): CommandInterfaces;
 }

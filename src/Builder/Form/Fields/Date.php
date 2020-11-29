@@ -10,7 +10,7 @@ use Carbon\Carbon;
  */
 class Date extends Datetime
 {
-    use FieldTrait;
+
 
     /** @var string */
     const FIELD_TYPE = 'date';
@@ -25,8 +25,9 @@ class Date extends Datetime
     {
         if ($original === false) {
             $value = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $this->value);
-
-            return $value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+            if ($value) {
+                return $value->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+            }
         }
 
         return $this->value;

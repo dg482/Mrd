@@ -12,7 +12,7 @@ use Dg482\Mrd\Model;
  */
 class File extends FieldEnum
 {
-    use FieldTrait;
+
 
     /** @var string */
     const FIELD_TYPE = 'file';
@@ -82,7 +82,7 @@ class File extends FieldEnum
                     'field' => $this->getField(),
                     'relation' => $relation,
                 ])->setFieldValue([]);
-            
+
             $this->relation = $relation;
         }
 

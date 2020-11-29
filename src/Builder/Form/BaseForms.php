@@ -4,10 +4,11 @@ namespace Dg482\Mrd\Builder\Form;
 
 use Dg482\Mrd\Builder\Form\Buttons\Button;
 use Dg482\Mrd\Builder\Form\Fields\Field;
+use Dg482\Mrd\Builder\Form\Fields\Hidden;
 use Dg482\Mrd\Builder\Form\Fields\Select;
 use Dg482\Mrd\Builder\Form\Fields\Table;
 use Dg482\Mrd\Model;
-use Dg482\Mrd\Resource\Resource;
+use Dg482\Mrd\Resource\Resource as BaseResource;
 use Exception;
 
 /**
@@ -16,7 +17,7 @@ use Exception;
  */
 class BaseForms implements Model
 {
-    use ValidatorsTrait, CommonFields;
+    use ValidatorsTrait;
 
     /** @var string */
     const ACTION_SAVE = 'action_save';
@@ -27,9 +28,7 @@ class BaseForms implements Model
     /** @var string */
     const ACTION_CANCEL = 'action_cancel';
 
-    /**
-     * @var string $title
-     */
+    /** @var string $title */
     public string $title = 'forms';
 
     /** @var string */
@@ -38,20 +37,25 @@ class BaseForms implements Model
     /** @var Model $model */
     private Model $model;
 
-    /**
-     * @var string[]
-     */
+    /** @var array */
     private array $actions = [];
 
     /**
-     * @var string
+     * @var BaseResource $resource
      */
-    protected string $resource;
+    protected BaseResource $resource;
 
     /**
-     * @var mixed|Resource
+     * BaseForms constructor.
+     * @param  Model  $model
+     * @param  BaseResource  $resource
      */
-    protected $m_resource;
+    public function __construct(Model $model, BaseResource $resource)
+    {
+        $this->model = $model;
+        $this->resource = $resource;
+    }
+
 
     /**
      * @return mixed
@@ -61,15 +65,15 @@ class BaseForms implements Model
     {
         $this->resource()->setContext(BaseForms::class);
 
-        return $this->m_resource->fields();
+        return $this->resource->fields();
     }
 
     /**
-     * @return Resource|null
+     * @return BaseResource
      */
-    public function resource(): ?Resource
+    public function resource(): BaseResource
     {
-        return $this->m_resource;
+        return $this->resource;
     }
 
     /**
@@ -100,7 +104,7 @@ class BaseForms implements Model
     }
 
     /**
-     * @return string[]
+     * @return array
      */
     public function getActions(): array
     {
@@ -126,7 +130,7 @@ class BaseForms implements Model
     }
 
     /**
-     * @param  string[]  $actions
+     * @param  array  $actions
      * @return $this
      */
     public function setActions(array $actions): self
@@ -151,7 +155,7 @@ class BaseForms implements Model
      */
     public function hasOneField(string $relation): array
     {
-        return $this->m_resource->hasOne($relation)
+        return $this->resource->hasOne($relation)
             ->fields();
     }
 
@@ -163,25 +167,18 @@ class BaseForms implements Model
      */
     public function hasManyField(string $relation, $fieldType = Table::FIELD_TYPE): Field
     {
-        $relationResource = $this->m_resource->hasMany($relation);
+        $relationResource = $this->resource->hasMany($relation);
         $relationResource->setField($fieldType);
 
         switch ($relationResource->getField()) {
+            default:
+            case Table::FIELD_TYPE:
             case Select::FIELD_TYPE:
-                $field = Select::make($relation, $relation);
+                $field = new Select(0, $relation, $this->model);
 //                TODO: add element to select field
 //                array_map(function (Model $model) {
 //                }, $relationResource->getCollection());
-
                 break;
-            case Table::FIELD_TYPE:
-            default:
-                return (new Table)
-                    ->setField($relation)
-                    ->setFieldValue(
-                        $relationResource->getRelation() === $relation ?
-                        $relationResource->getTable() : []
-                    );
         }
 
         return $field;
@@ -211,5 +208,20 @@ class BaseForms implements Model
     public function create(array $request): Model
     {
         return $this;
+    }
+
+    /**
+     * @param  Field  $field
+     * @return Field
+     */
+    public function fieldUserId(Field $field): Field
+    {
+        $user_id = $field->getFieldValue(true);
+        if (empty($user_id)) {
+            $field->setFieldValue(0);
+        }
+
+        return (new Hidden(0, (string)$field->getFieldValue(true), $this->getForm()))
+            ->hideTable();
     }
 }

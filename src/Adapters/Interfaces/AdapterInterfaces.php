@@ -4,7 +4,6 @@ namespace Dg482\Mrd\Adapters\Interfaces;
 
 use Closure;
 use Dg482\Mrd\Model;
-use IteratorAggregate;
 
 /**
  * Interface AdapterInterfaces
@@ -13,10 +12,10 @@ use IteratorAggregate;
 interface AdapterInterfaces
 {
     /**
-     * @param $model
-     * @return $this
+     * @param Model $model
+     * @return AdapterInterfaces
      */
-    public function setModel($model): self;
+    public function setModel(Model $model): AdapterInterfaces;
 
     /**
      * @return Model
@@ -25,9 +24,9 @@ interface AdapterInterfaces
 
     /**
      * @param  int  $limit
-     * @return array|bool
+     * @return array
      */
-    public function read($limit = 1);
+    public function read($limit = 1): array;
 
     /**
      * @return bool
