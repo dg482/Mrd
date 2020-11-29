@@ -24,20 +24,19 @@ class ExampleTest extends TestCase
     /** @var BaseResource */
     private BaseResource $resource;
 
+    /** @var BaseModel */
+    private BaseModel $model;
+
+    /** @var BaseForms */
+    private BaseForms $form;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->resource = (new BaseResource);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testException()
-    {
-        $this->expectException(ModelNotInstalled::class);
-        $this->resource->getForm();
+        $this->model = (new BaseModel);
+        $this->form = new BaseForms($this->model, $this->resource);
     }
 
     /**
@@ -74,18 +73,18 @@ class ExampleTest extends TestCase
     {
         $this->resource = $this->resource
             ->setAdapter(
-                (new BaseAdapter)
-                    ->setModel(new BaseModel)
-                    ->setFields($this->initFields())
-            )// set adapter
-            ->setFormModel(new BaseForms);
+                (new BaseAdapter($this->model, $this->initFields()))
+            )
+            ->setFormModel($this->form);
     }
 
-
+    /**
+     * @return array
+     */
     protected function initFields(): array
     {
         $fields = [];
-        $fieldFormModel = (new FieldFromModel);
+        $fieldFormModel = (new FieldFromModel(new BaseModel));
 
         try {
             array_push($fields, $fieldFormModel->getField([

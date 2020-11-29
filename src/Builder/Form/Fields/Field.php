@@ -17,8 +17,8 @@ abstract class Field
 {
     use ValidatorsTrait, BadgeTrait, TranslateTrait, AttributeTrait;
 
-    /** @var int|null $id */
-    public ?int $id;
+    /** @var int $id */
+    public int $id;
 
     /**
      * Имя поля
@@ -86,8 +86,8 @@ abstract class Field
     /** @var string */
     protected string $placeholder = '';
 
-    /** @var mixed */
-    protected $value;
+    /** @var string */
+    protected string $value;
 
     /** @var int */
     protected int $width = 100;
@@ -98,9 +98,21 @@ abstract class Field
     /** @var array */
     protected array $data = [];
 
-    /** @var Model|null */
-    protected ?Model $relation;
+    /** @var Model */
+    protected Model $relation;
 
+    /**
+     * Field constructor.
+     * @param  int  $id
+     * @param  string  $value
+     * @param  Model  $relation
+     */
+    public function __construct(int $id, string $value, Model $relation)
+    {
+        $this->id = $id;
+        $this->value = $value;
+        $this->relation = $relation;
+    }
 
     /**
      * Массив параметров поля для отрисовки в UI
@@ -329,10 +341,10 @@ abstract class Field
 
     /**
      * @param  Model  $model
-     * @param  ?Model  $relation
+     * @param  Model  $relation
      * @return $this
      */
-    public function setFieldRelation(Model $model, ?Model $relation): Field
+    public function setFieldRelation(Model $model, Model $relation): Field
     {
         if (null === $this->relation && $relation) {
             $this->setData([

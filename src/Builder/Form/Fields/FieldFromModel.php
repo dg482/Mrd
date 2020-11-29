@@ -11,8 +11,17 @@ use Dg482\Mrd\Model;
  */
 class FieldFromModel
 {
-    /** @var null|Model */
-    protected ?Model $model = null;
+    /** @var Model */
+    protected Model $model;
+
+    /**
+     * FieldFromModel constructor.
+     * @param  Model  $model
+     */
+    public function __construct(Model $model)
+    {
+        $this->model = $model;
+    }
 
     /**
      * @var array
@@ -35,29 +44,30 @@ class FieldFromModel
             case 'created_at':
             case 'updated_at':
             case 'deleted_at':
-                $field = new Hidden();
+                $field = new Hidden(0, $column['id'], $this->model);
+
                 break;
             default:
                 switch ($column['type']) {
                     case Text::FIELD_TYPE:
-                        $field = (new Text);
+                        $field = (new Text(0, $column['id'], $this->model));
                         break;
                     case Integer::FIELD_TYPE:
                     case Integer::FIELD_TYPE_BIGINT:
                     case Integer::FIELD_TYPE_SMALLINT:
-                        $field = (new Integer);
+                        $field = (new Integer(0, $column['id'], $this->model));
                         break;
                     case Date::FIELD_TYPE:
-                        $field = (new Date);
+                        $field = (new Date(0, $column['id'], $this->model));
                         break;
                     case Datetime::FIELD_TYPE:
-                        $field = (new Datetime);
+                        $field = (new Datetime(0, $column['id'], $this->model));
                         break;
                     case Boolean::FIELD_TYPE:
-                        $field = (new Boolean);
+                        $field = (new Boolean(0, $column['id'], $this->model));
                         break;
                     case File::FIELD_TYPE:
-                        $field = (new File);
+                        $field = (new File(0, $column['id'], $this->model));
                         break;
                     default:
                         throw new FieldNotFound(sprintf('Field type "%s" not found.', $column['type']));
@@ -72,7 +82,7 @@ class FieldFromModel
         $field->showTable($show);
         $field->showForm($show);
 
-        if ($this->model && $this->model->{$column['id']}) {
+        if ($this->model && isset($this->model->{$column['id']})) {
             $field->setFieldValue($this->model->{$column['id']});
         }
 

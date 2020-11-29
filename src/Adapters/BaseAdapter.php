@@ -12,17 +12,28 @@ use Dg482\Mrd\Model;
  */
 class BaseAdapter extends Adapter
 {
-    /** @var array */
-    private array $fields = [];
+    /** @var array $fields */
+    private array $fields;
 
     /** @var Model */
     private Model $model;
 
     /**
-     * @param $model
-     * @return $this|AdapterInterfaces
+     * BaseAdapter constructor.
+     * @param  Model  $model
+     * @param  array  $fields
      */
-    public function setModel($model): Interfaces\AdapterInterfaces
+    public function __construct(Model $model, array $fields = [])
+    {
+        $this->model = $model;
+        $this->fields = $fields;
+    }
+
+    /**
+     * @param  Model  $model
+     * @return AdapterInterfaces
+     */
+    public function setModel(Model $model): AdapterInterfaces
     {
         $this->model = $model;
 
@@ -42,7 +53,9 @@ class BaseAdapter extends Adapter
      */
     public function readCmd(): bool
     {
-        return false;
+        $this->getCommand()->setResult([]);
+
+        return true;
     }
 
     /**

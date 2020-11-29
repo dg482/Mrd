@@ -8,7 +8,7 @@ namespace Dg482\Mrd\Builder\Form\Fields;
  */
 class Select extends FieldEnum
 {
-    use FieldTrait;
+
 
     const FIELD_TYPE = 'select';
 

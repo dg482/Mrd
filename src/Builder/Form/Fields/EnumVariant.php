@@ -8,27 +8,30 @@ namespace Dg482\Mrd\Builder\Form\Fields;
  */
 class EnumVariant
 {
-    /** @var int|null $id*/
-    public ?int $id;
+    /** @var int $id */
+    protected int $id;
 
     /** @var string */
-    const NAME = 'value';
+    protected string $name;
 
     /** @var string */
-    const USER_ID = 'user_id';
+    protected string $model = 'field_enum_variant';
 
-    /** @var string */
-    public string $model = 'field_enum_variant';
+    public function __construct(int $id = 0, string $name = '')
+    {
+        $this->id = $id;
+        $this->name = $name;
+    }
 
     /**
      * @param  int  $id
      * @param  string  $name
      * @return $this
      */
-    public function make(int $id, string $name)
+    public function make(int $id = 0, string $name = '')
     {
-        $this->id = (int)$id;
-        $this->{self::NAME} = $name;
+        $this->id = $id;
+        $this->name = $name;
 
         return $this;
     }
@@ -40,7 +43,7 @@ class EnumVariant
     {
         return [
             'id' => $this->id,
-            self::NAME => $this->{self::NAME},
+            'name' => $this->name,
         ];
     }
 }

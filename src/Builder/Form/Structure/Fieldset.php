@@ -10,7 +10,7 @@ use Dg482\Mrd\Builder\Form\Fields\FieldTrait;
  */
 class Fieldset extends BaseStructure
 {
-    use FieldTrait;
+
 
     const FIELD_TYPE = 'fieldset';
 

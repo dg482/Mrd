@@ -2,10 +2,7 @@
 
 namespace Dg482\Mrd\Resource;
 
-use Dg482\Mrd\Adapters\Adapter;
-use Dg482\Mrd\Adapters\Interfaces\AdapterInterfaces;
 use Dg482\Mrd\Builder\Form\BaseForms;
-use Dg482\Mrd\Builder\Form\CommonFields;
 use Dg482\Mrd\Builder\Form\Fields\Field;
 use Dg482\Mrd\Builder\Form\Structure\BaseStructure;
 use Dg482\Mrd\Builder\Form\Structure\Fieldset;
@@ -33,7 +30,7 @@ use Dg482\Mrd\Resource\Actions\Update as ActionUpdate;
  */
 class Resource
 {
-    use ResourceTrait, RelationTrait, ValidatorsTrait, CommonFields;
+    use ResourceTrait, RelationTrait, ValidatorsTrait;
 
     /**
      * Команда адаптера
@@ -43,9 +40,9 @@ class Resource
 
     /**
      * Текущее отношение в контексте ресурса
-     * @var string|null
+     * @var string
      */
-    protected ?string $relation = null;
+    protected string $relation = '';
 
     /**
      * Список доступных отношений, ссылки на RelationResource
@@ -113,7 +110,10 @@ class Resource
      */
     public function formFields(): array
     {
-        $fields = [Fieldset::make('Empty fieldset', '')];
+        $fields = [
+            new Fieldset(0, 'Empty fieldset', $this->model)
+//            Fieldset::make('Empty fieldset', '')
+        ];
 
         if (method_exists($this->model, 'resourceFields')) {
             $fields = $this->model->resourceFields();
@@ -186,18 +186,18 @@ class Resource
     }
 
     /**
-     * @return null|string
+     * @return string
      */
-    public function getRelation()
+    public function getRelation(): string
     {
         return $this->relation;
     }
 
     /**
-     * @param  null  $relation
+     * @param  string  $relation
      * @return Resource
      */
-    public function setRelation($relation)
+    public function setRelation(string $relation): self
     {
         $this->relation = $relation;
 

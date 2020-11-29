@@ -10,7 +10,7 @@ use Carbon\Carbon;
  */
 class Datetime extends Field
 {
-    use FieldTrait;
+
 
     /** @var string */
     const FIELD_TYPE = 'datetime';
